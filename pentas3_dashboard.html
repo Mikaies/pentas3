@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pentas3 — Financial Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/calculator.css">
+<link rel="stylesheet" href="css/summary.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- ══ SCREEN 1: LOGIN ══ -->
+<div class="screen active" id="screen-login">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">P3</div>
+      <div class="login-title">Pentas3</div>
+      <div class="login-sub">Theater in Your Pocket</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inp-user">Username</label>
+      <input class="form-input" id="inp-user" type="text" placeholder="Enter username" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inp-pass">Password</label>
+      <input class="form-input" id="inp-pass" type="password" placeholder="Enter password" autocomplete="current-password"/>
+      <div class="form-error" id="login-error">Incorrect username or password. Please try again.</div>
+    </div>
+    <button class="btn-primary" id="btn-login">Sign In</button>
+    <div class="login-hint">Credentials: <span>admin</span> / <span>pentas3</span></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-calc">
+  <div class="calc-box" style="max-width:620px;">
+    <div class="calc-header">
+      <div class="calc-step">Step 1 of 2 — Configure 3 Scenarios</div>
+      <div class="calc-title">Budget Scenarios</div>
+      <div class="calc-sub">Define Minimum, Decent and Maximum budgets to compare investment outcomes</div>
+    </div>
+    <div class="scenario-tabs">
+      <button class="sc-tab active" id="tab-min" onclick="switchScenarioTab('min')"><span class="sc-tab-dot" style="background:#cd853f"></span>Minimum</button>
+      <button class="sc-tab" id="tab-decent" onclick="switchScenarioTab('decent')"><span class="sc-tab-dot" style="background:var(--gold)"></span>Decent</button>
+      <button class="sc-tab" id="tab-max" onclick="switchScenarioTab('max')"><span class="sc-tab-dot" style="background:#e05060"></span>Maximum</button>
+    </div>
+
+    <!-- SCENARIO: MINIMUM -->
+    <div id="sc-panel-min">
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div class="scenario-badge badge-min">&#127807; Minimum Budget</div>
+        <div style="font-size:12px;color:var(--muted2);">Conservative investment — lean team, tight spend, proof of concept</div>
+      </div>
+      <div class="calc-section-title">&#128176; Pricing</div>
+      <div class="form-group">
+        <label class="form-label">Price per episode (RM)</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinPrice('min',-0.10)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-price-min" type="number" step="0.01" min="0.01" value="0.30"/>
+          <button class="spin-btn" onclick="spinPrice('min',0.10)" type="button">+</button>
+        </div>
+        <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinEps('min',-1)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-eps-min" type="number" min="1" max="17" value="10" oninput="updateEpisodeVisualFor('min')"/>
+          <button class="spin-btn" onclick="spinEps('min',1)" type="button">+</button>
+        </div>
+        <div class="episodes-visual" id="ep-visual-min"></div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#127916; Dramas</div>
+      <div class="form-group">
+        <div class="drama-counter">
+          <button class="counter-btn" onclick="spinDrama('min',-1)" type="button">&#8722;</button>
+          <div><div class="counter-val" id="drama-count-min">3</div><div class="counter-label">drama(s)</div></div>
+          <button class="counter-btn" onclick="spinDrama('min',1)" type="button">+</button>
+        </div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="cost-grid">
+        <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-min" type="number" min="0" value="8000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-min" type="number" min="0" value="15000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Marketing</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-marketing-min" type="number" min="0" value="5000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
+      </div>
+      <div class="total-cost-bar"><div class="total-cost-label">Total fixed cost</div><div class="total-cost-val" id="total-cost-display-min">RM 28,000</div></div>
+    </div>
+
+    <!-- SCENARIO: DECENT -->
+    <div id="sc-panel-decent" style="display:none;">
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div class="scenario-badge badge-decent">&#9878;&#65039; Decent Budget</div>
+        <div style="font-size:12px;color:var(--muted2);">Balanced investment — solid production, moderate marketing push</div>
+      </div>
+      <div class="calc-section-title">&#128176; Pricing</div>
+      <div class="form-group">
+        <label class="form-label">Price per episode (RM)</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinPrice('decent',-0.10)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-price-decent" type="number" step="0.01" min="0.01" value="0.40"/>
+          <button class="spin-btn" onclick="spinPrice('decent',0.10)" type="button">+</button>
+        </div>
+        <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinEps('decent',-1)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-eps-decent" type="number" min="1" max="17" value="14" oninput="updateEpisodeVisualFor('decent')"/>
+          <button class="spin-btn" onclick="spinEps('decent',1)" type="button">+</button>
+        </div>
+        <div class="episodes-visual" id="ep-visual-decent"></div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#127916; Dramas</div>
+      <div class="form-group">
+        <div class="drama-counter">
+          <button class="counter-btn" onclick="spinDrama('decent',-1)" type="button">&#8722;</button>
+          <div><div class="counter-val" id="drama-count-decent">5</div><div class="counter-label">drama(s)</div></div>
+          <button class="counter-btn" onclick="spinDrama('decent',1)" type="button">+</button>
+        </div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="cost-grid">
+        <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-decent" type="number" min="0" value="15000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-decent" type="number" min="0" value="30000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Marketing</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-marketing-decent" type="number" min="0" value="10000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
+      </div>
+      <div class="total-cost-bar"><div class="total-cost-label">Total fixed cost</div><div class="total-cost-val" id="total-cost-display-decent">RM 55,000</div></div>
+    </div>
+
+    <!-- SCENARIO: MAXIMUM -->
+    <div id="sc-panel-max" style="display:none;">
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div class="scenario-badge badge-max">&#128640; Maximum Budget</div>
+        <div style="font-size:12px;color:var(--muted2);">Full-scale launch — premium production, aggressive marketing, max dramas</div>
+      </div>
+      <div class="calc-section-title">&#128176; Pricing</div>
+      <div class="form-group">
+        <label class="form-label">Price per episode (RM)</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinPrice('max',-0.10)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-price-max" type="number" step="0.01" min="0.01" value="0.50"/>
+          <button class="spin-btn" onclick="spinPrice('max',0.10)" type="button">+</button>
+        </div>
+        <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinEps('max',-1)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-eps-max" type="number" min="1" max="17" value="17" oninput="updateEpisodeVisualFor('max')"/>
+          <button class="spin-btn" onclick="spinEps('max',1)" type="button">+</button>
+        </div>
+        <div class="episodes-visual" id="ep-visual-max"></div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#127916; Dramas</div>
+      <div class="form-group">
+        <div class="drama-counter">
+          <button class="counter-btn" onclick="spinDrama('max',-1)" type="button">&#8722;</button>
+          <div><div class="counter-val" id="drama-count-max">8</div><div class="counter-label">drama(s)</div></div>
+          <button class="counter-btn" onclick="spinDrama('max',1)" type="button">+</button>
+        </div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="cost-grid">
+        <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-max" type="number" min="0" value="30000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-max" type="number" min="0" value="50000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
+        <div class="cost-card"><div class="cost-card-label">Marketing</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-marketing-max" type="number" min="0" value="25000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
+      </div>
+      <div class="total-cost-bar"><div class="total-cost-label">Total fixed cost</div><div class="total-cost-val" id="total-cost-display-max">RM 105,000</div></div>
+    </div>
+
+    <div class="calc-divider"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-secondary" id="btn-calc-back" style="flex:1;padding:12px;">&#8592; Back to Login</button>
+      <button class="btn-primary" id="btn-calculate" style="flex:3;">Preview All 3 Scenarios &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-summary">
+  <div class="summary-box" style="max-width:680px;">
+    <div class="summary-header">
+      <div class="summary-check">✓</div>
+      <div class="summary-title">Scenarios Overview</div>
+      <div class="summary-sub">Compare all 3 budget scenarios before entering the dashboard</div>
+    </div>
+    <div class="sc-summary-grid">
+      <div class="sc-summary-card sc-min">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#cd853f;margin-bottom:10px;">&#127807; Minimum</div>
+        <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-min">—</div>
+        <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-min">—</div>
+        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-min">—</div>
+        <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-min">—</div>
+        <div class="sc-sum-label">Est. Net Profit</div>
+        <div class="sc-sum-net" id="ssum-net-min">—</div>
+      </div>
+      <div class="sc-summary-card sc-decent">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">&#9878;&#65039; Decent</div>
+        <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-decent">—</div>
+        <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-decent">—</div>
+        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-decent">—</div>
+        <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-decent">—</div>
+        <div class="sc-sum-label">Est. Net Profit</div>
+        <div class="sc-sum-net" id="ssum-net-decent">—</div>
+      </div>
+      <div class="sc-summary-card sc-max">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e05060;margin-bottom:10px;">&#128640; Maximum</div>
+        <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-max">—</div>
+        <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-max">—</div>
+        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-max">—</div>
+        <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-max">—</div>
+        <div class="sc-sum-label">Est. Net Profit</div>
+        <div class="sc-sum-net" id="ssum-net-max">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btn-back">&#8592; Back to Editing</button>
+      <button class="btn-primary-sm" id="btn-enter-dash">Enter Dashboard &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 4: DASHBOARD ══ -->
+<div class="screen" id="screen-dashboard" style="flex-direction:column;">
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-icon">P3</div>
+      <div>
+        <div class="logo-name">Pentas3</div>
+        <div class="logo-sub">Financial Dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">Signed in as <span id="topbar-username">admin</span></div>
+      <button class="icon-btn" id="btn-mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Light mode
+      </button>
+      <button class="icon-btn" id="btn-back-to-summary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Edit Scenarios
+      </button>
+      <button class="icon-btn" id="btn-logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign out
+      </button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Overview
+      </div>
+      <div class="nav-item" data-page="projections">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>12-Month Projections
+      </div>
+      <div class="nav-item" data-page="costs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Cost Breakdown
+      </div>
+      <div class="nav-item" data-page="payout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Payout Split
+      </div>
+      <div class="nav-item" data-page="scenarios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Scenarios Compare
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-label">Your configuration</div>
+      <div class="sc-pills" id="configPills"></div>
+    </aside>
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <div class="page active" id="page-overview">
+        <div class="page-header">
+          <div class="page-title">Overview</div>
+          <div class="page-sub" id="dash-sub">—</div>
+        </div>
+        <div class="config-banner" id="configBanner"></div>
+        <div class="metrics-grid" id="overviewMetrics"></div>
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Monthly revenue breakdown</div><div class="card-sub">12-month projection based on your configuration</div></div>
+            <div class="chart-tabs">
+              <button class="ctab active" data-chart="revenue">Revenue</button>
+              <button class="ctab" data-chart="users">Users</button>
+              <button class="ctab" data-chart="net">Net profit</button>
+            </div>
+          </div>
+          <div class="legend" style="margin-bottom:12px;" id="chartLegend"></div>
+          <div style="position:relative;width:100%;height:260px;"><canvas id="mainChart"></canvas></div>
+        </div>
+        <div id="detailPanel" class="detail-panel">
+          <div class="detail-title" id="detailTitle"></div>
+          <div class="detail-grid" id="detailGrid"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Monthly breakdown table</div><div class="card-sub" style="font-size:11px;color:var(--muted)">Click any row for details</div></div>
+          <div class="table-wrap"><table><thead><tr>
+            <th>Month</th><th>Phase</th><th>Total users</th><th>Paying users</th><th>Revenue</th><th>Direct cost</th><th>Gross profit</th><th>Net profit</th>
+          </tr></thead><tbody id="tableBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- PROJECTIONS -->
+      <div class="page" id="page-projections">
+        <div class="page-header">
+          <div class="page-title">12-Month Projections</div>
+          <div class="page-sub">Holiday-adjusted · Malaysian public holidays anchored for months 7–12</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Full projection table</div></div>
+          <div class="table-wrap"><table><thead><tr>
+            <th>Month</th><th>Phase & holiday</th><th>Total users</th><th>Paying users</th><th>Revenue</th><th>Direct cost (40%)</th><th>Gross profit (60%)</th><th>Monthly fixed</th><th>Net profit</th>
+          </tr></thead><tbody id="projTableBody"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Holiday alignment — months 7–12</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;" id="holidayCards"></div>
+        </div>
+      </div>
+
+      <!-- COSTS -->
+      <div class="page" id="page-costs">
+        <div class="page-header">
+          <div class="page-title">Cost Breakdown</div>
+          <div class="page-sub">Your custom cost structure and how it affects profitability</div>
+        </div>
+        <div class="sc-grid" id="costCards"></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Cost vs gross profit comparison</div></div>
+          <div style="position:relative;width:100%;height:260px;"><canvas id="costChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Pricing rationale</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.30 baseline</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">Clears payment gateway fees (Touch 'n Go / FPX). Avoids "cheap content" perception while keeping friction low.</div></div>
+            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.40 moderate</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 6.80 total stays well under a fast-food meal. Psychological sweetspot between accessible and premium.</div></div>
+            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.50 maximum</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 8.50 total sits safely below the RM 16.90/month iQIYI subscription — avoids direct streaming comparison.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYOUT -->
+      <div class="page" id="page-payout">
+        <div class="page-header">
+          <div class="page-title">Payout Split</div>
+          <div class="page-sub">Revenue distribution — Producer · Director · Pentas3</div>
+        </div>
+        <div class="payout-grid">
+          <div class="payout-card" style="border-color:rgba(212,175,55,.4)"><div class="payout-role">Producer</div><div class="payout-pct gold">80%</div><div class="payout-desc">Primary content creator share</div><div class="payout-amt" id="po-producer">—</div></div>
+          <div class="payout-card" style="border-color:rgba(245,245,245,.3)"><div class="payout-role">Director</div><div class="payout-pct" style="color:var(--white)">20%</div><div class="payout-desc">Creative direction share</div><div class="payout-amt" id="po-director">—</div></div>
+          <div class="payout-card" style="border-color:rgba(190,30,45,.4);opacity:.5"><div class="payout-role">Pentas3</div><div class="payout-pct red" style="font-size:16px;padding-top:8px;">Transaction cost only</div><div class="payout-desc">App store / gateway fees (not from net profit)</div><div class="payout-amt" id="po-pentas" style="font-size:11px;color:var(--muted)">Android/Apple cut</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Payout breakdown chart</div></div>
+          <div style="position:relative;width:100%;height:240px;"><canvas id="payoutChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Profitability for producer & director</div></div>
+          <div style="padding:1rem;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);margin-bottom:12px;" id="producerInsight"></div>
+          <div class="table-wrap"><table><thead><tr><th>Role</th><th>Share</th><th>Amount from net profit</th><th>Per drama</th></tr></thead><tbody id="payoutDetailBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- SCENARIOS COMPARISON -->
+      <div class="page" id="page-scenarios">
+        <div class="page-header">
+          <div class="page-title">Scenarios Comparison</div>
+          <div class="page-sub">Minimum · Decent · Maximum — side-by-side 12-month projection</div>
+        </div>
+        <div id="scCompareMetrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;"></div>
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Net profit trajectory — all 3 scenarios</div><div class="card-sub">Monthly net profit across 12 months · hover for details</div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-bottom:12px;" id="scCompareLegend"></div>
+          <div style="position:relative;width:100%;height:300px;"><canvas id="scCompareChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Revenue vs Investment comparison</div><div class="card-sub">Total revenue, fixed cost and net profit per scenario</div></div>
+          <div style="position:relative;width:100%;height:260px;"><canvas id="scBarChart"></canvas></div>
+        </div>
+        <div class="card" id="scPredictionCard">
+          <div class="card-header"><div class="card-title">&#127775; Best Outcome Prediction</div></div>
+          <div id="scPredictionBody" style="padding:.5rem 0;"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Scenario detail table</div></div>
+          <div class="table-wrap">
+            <table><thead><tr>
+              <th>Metric</th>
+              <th style="color:#cd853f">&#127807; Minimum</th>
+              <th style="color:var(--gold)">&#9878; Decent</th>
+              <th style="color:#e05060">&#128640; Maximum</th>
+            </tr></thead>
+            <tbody id="scDetailTable"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="js/state.js"></script>
+<script src="js/login.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/scenarios.js"></script>
+</body>
+</html>

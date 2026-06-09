@@ -1,0 +1,77 @@
+/* ── CALCULATOR ── */
+#screen-calc{flex-direction:column;align-items:center;justify-content:flex-start;padding:2rem 1rem;overflow-y:auto;}
+.calc-box{width:100%;max-width:580px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:2rem;margin-bottom:2rem;}
+.calc-header{text-align:center;margin-bottom:1.75rem;}
+.calc-step{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson);margin-bottom:4px;}
+.calc-title{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--white);}
+.calc-sub{font-family:var(--font-serif);font-style:italic;font-size:12px;color:var(--muted2);margin-top:3px;}
+.calc-section-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(190,30,45,.2);}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.input-hint{font-size:10px;color:var(--muted);margin-top:4px;}
+.input-hint.error-hint{color:var(--crimson);}
+.input-addon{position:relative;}
+.input-addon .form-input{padding-left:38px;}
+.input-addon .addon-text{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--gold);pointer-events:none;}
+.free-tag{display:inline-block;background:rgba(212,175,55,.15);color:var(--gold);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;}
+.calc-divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+/* hide native spinner arrows on ALL number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
+
+/* spin controls — crimson/gold brand colours */
+.spin-group{display:flex;align-items:center;gap:0;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;}
+.spin-btn{
+  width:38px;height:40px;flex-shrink:0;
+  background:rgba(190,30,45,.15);
+  border:none;
+  color:var(--crimson);
+  font-size:18px;font-weight:700;
+  cursor:pointer;transition:background .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.spin-btn:hover{background:var(--crimson);color:#fff;}
+.spin-input{
+  flex:1;min-width:0;
+  padding:10px 8px;text-align:center;
+  background:var(--surface2);
+  border:none;border-left:1px solid var(--border2);border-right:1px solid var(--border2);
+  color:var(--white);font-family:var(--font-head);font-size:14px;font-weight:600;
+  outline:none;
+}
+.spin-input:focus{background:var(--surface3);}
+
+/* episode visual dots */
+.episodes-visual{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.ep-dot{width:22px;height:22px;border-radius:5px;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--muted);transition:all .15s;}
+.ep-dot.free{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.4);color:var(--gold);}
+.ep-dot.paid{background:rgba(190,30,45,.2);border-color:rgba(190,30,45,.5);color:#e05060;}
+
+/* drama counter */
+.drama-counter{display:flex;align-items:center;gap:12px;}
+.counter-btn{width:36px;height:36px;border-radius:50%;background:rgba(190,30,45,.15);border:1px solid var(--crimson);color:var(--crimson);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.counter-btn:hover{background:var(--crimson);color:#fff;}
+.counter-val{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--white);flex:1;text-align:center;}
+.counter-label{font-size:11px;color:var(--muted);text-align:center;margin-top:2px;}
+
+/* cost input cards */
+.cost-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.cost-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem;}
+.cost-card-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.cost-card-total{font-family:var(--font-head);font-size:12px;font-weight:600;color:var(--gold);margin-top:8px;text-align:right;}
+.total-cost-bar{background:rgba(190,30,45,.08);border:1px solid rgba(190,30,45,.2);border-radius:var(--radius);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+.total-cost-label{font-size:11px;color:var(--muted2);font-weight:500;}
+.total-cost-val{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--crimson);}
+
+.scenario-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.75rem;}
+.sc-tab{flex:1;padding:10px 8px;background:transparent;border:none;color:var(--muted2);font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;border-right:1px solid var(--border2);}
+.sc-tab:last-child{border-right:none;}
+.sc-tab.active{background:var(--crimson);color:#fff;}
+.sc-tab.done{background:rgba(212,175,55,.15);color:var(--gold);}
+.sc-tab-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;}
+.scenario-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.badge-min{background:rgba(160,82,45,.2);color:#cd853f;}
+.badge-decent{background:rgba(212,175,55,.2);color:var(--gold);}
+.badge-max{background:rgba(190,30,45,.2);color:#e05060;}
+
