@@ -1,3 +1,58 @@
+/* ── SCENARIO SWITCHER ── */
+let activeOverviewScenario = 'decent';
+
+function switchOverviewScenario(sc){
+  activeOverviewScenario = sc;
+  cfg = { ...scenarios[sc] };
+
+  // update button styles
+  ['min','decent','max'].forEach(s=>{
+    const btn = document.getElementById('switch-'+s);
+    btn.className = 'sc-switch-btn' + (s===sc?' active '+s:'');
+  });
+
+  /* ── BREAK-EVEN INDICATOR ── */
+function renderBreakEven(){
+  const fixed = totalFixed();
+  const pricePerEp = cfg.price;
+  const paidEps = cfg.paidEps;
+  const revenuePerUser = pricePerEp * paidEps;
+  const netRevenuePerUser = revenuePerUser * 0.60;
+  const breakEvenUsers = Math.ceil(fixed / netRevenuePerUser);
+
+  const data = calcMonthData();
+  const totalPaying = data.reduce((a,d)=>a+d.paying,0);
+  const pct = Math.min((totalPaying / breakEvenUsers) * 100, 100);
+  const achieved = totalPaying >= breakEvenUsers;
+
+  const barColor = achieved ? 'var(--gold)' : pct > 60 ? '#e09000' : 'var(--crimson)';
+  const statusText = achieved
+    ? '✅ Break-even achieved!'
+    : `Still need ${(breakEvenUsers - totalPaying).toLocaleString()} more paying users`;
+  const statusColor = achieved ? 'var(--gold)' : 'var(--crimson)';
+
+  document.getElementById('breakevenCard').innerHTML = `
+    <div class="breakeven-title">💡 Break-even Point</div>
+    <div class="breakeven-row">
+      <div class="breakeven-stat">Need: <strong>${breakEvenUsers.toLocaleString()} paying users</strong> to cover <strong>${fmt(fixed)}</strong> fixed costs</div>
+      <div class="breakeven-stat">Current: <strong>${totalPaying.toLocaleString()} paying users</strong></div>
+    </div>
+    <div class="breakeven-bar-wrap">
+      <div class="breakeven-bar" style="width:${pct.toFixed(1)}%;background:${barColor}"></div>
+    </div>
+    <div class="breakeven-status" style="color:${statusColor}">${statusText} · ${pct.toFixed(0)}%</div>
+  `;
+}
+
+  // update everything on overview page
+  buildConfigBanner();
+  buildConfigPills();
+  renderOverviewMetrics();
+  renderMainChart();
+  renderTable();
+  renderBreakEven();
+}
+
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
@@ -10,14 +65,25 @@
    BUILD DASHBOARD
 ═══════════════════════════════════════════ */
 function buildDashboard(){
+  // default to decent on load
+  activeOverviewScenario = 'decent';
+  cfg = { ...scenarios.decent };
+
   document.getElementById('dash-sub').textContent=
     scenarios.decent.dramas+' dramas (decent) · RM '+scenarios.decent.price.toFixed(2)+'/ep · '+scenarios.decent.paidEps+' paid eps';
+
+  // set decent button as active
+  ['min','decent','max'].forEach(s=>{
+    const btn = document.getElementById('switch-'+s);
+    btn.className = 'sc-switch-btn' + (s==='decent'?' active decent':'');
+  });
 
   buildConfigBanner();
   buildConfigPills();
   renderOverviewMetrics();
   renderMainChart();
   renderTable();
+  renderBreakEven();
   renderProjTable();
   buildHolidayCards();
   buildCostCards();

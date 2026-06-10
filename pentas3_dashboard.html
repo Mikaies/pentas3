@@ -278,12 +278,29 @@
     <main class="main">
 
       <!-- OVERVIEW -->
-      <div class="page active" id="page-overview">
-        <div class="page-header">
-          <div class="page-title">Overview</div>
-          <div class="page-sub" id="dash-sub">—</div>
-        </div>
-        <div class="config-banner" id="configBanner"></div>
+  <div class="page active" id="page-overview">
+    <div class="page-header">
+      <div class="page-title">Overview</div>
+      <div class="page-sub" id="dash-sub">—</div>
+  </div>
+
+  <!-- SCENARIO SWITCHER -->
+  <div class="scenario-switcher">
+    <button class="sc-switch-btn active" id="switch-min" onclick="switchOverviewScenario('min')">
+      🌿 Minimum
+    </button>
+    <button class="sc-switch-btn" id="switch-decent" onclick="switchOverviewScenario('decent')">
+      ⚙️ Decent
+    </button>
+    <button class="sc-switch-btn" id="switch-max" onclick="switchOverviewScenario('max')">
+      🚀 Maximum
+    </button>
+  </div>
+
+  <div class="config-banner" id="configBanner"></div>
+
+  <!-- BREAK-EVEN INDICATOR -->
+  <div class="breakeven-card" id="breakevenCard"></div>
         <div class="metrics-grid" id="overviewMetrics"></div>
         <div class="card">
           <div class="card-header">
