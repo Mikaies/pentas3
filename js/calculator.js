@@ -1,11 +1,45 @@
+/* GLOBAL DRAMA & EPISODE SETUP */
+let globalDramas = 5;
+let globalEps = 14;
+
+function spinGlobalDrama(delta){
+  globalDramas = Math.max(1, globalDramas + delta);
+  document.getElementById('global-drama-count').textContent = globalDramas;
+}
+
+function spinGlobalEps(delta){
+  globalEps = Math.min(17, Math.max(1, globalEps + delta));
+  document.getElementById('global-eps').value = globalEps;
+  updateGlobalEpisodeVisual();
+}
+
+function updateGlobalEpisodeVisual(){
+  const paid = globalEps;
+  let dots = '';
+  for(let i = 1; i <= paid + 3; i++){
+    let cls = 'ep-dot';
+    if(i <= 3) cls += ' free'; else cls += ' paid';
+    dots += `<div class="${cls}" title="Ep ${i}">${i}</div>`;
+  }
+  document.getElementById('ep-visual-global').innerHTML = dots;
+}
+
+document.getElementById('btn-setup-next').addEventListener('click', ()=>{
+  showScreen('screen-calc');
+});
+
+document.getElementById('btn-setup-back').addEventListener('click', ()=>{
+  showScreen('screen-login');
+});
+
 /* ═══════════════════════════════════════════
    CALCULATE & PREVIEW
 ═══════════════════════════════════════════ */
 function readScenario(sc){
   return {
     price:      parseFloat(document.getElementById('inp-price-'+sc).value)||0.30,
-    paidEps:    parseInt(document.getElementById('inp-eps-'+sc).value)||10,
-    dramas:     dramaCounts[sc],
+    paidEps:    globalEps,
+    dramas:     globalDramas,
     production: parseFloat(document.getElementById('inp-production-'+sc).value)||0,
     management: parseFloat(document.getElementById('inp-management-'+sc).value)||0,
     marketing:  parseFloat(document.getElementById('inp-marketing-'+sc).value)||0,

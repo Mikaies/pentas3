@@ -92,3 +92,9 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
 .payout-desc{font-size:11px;color:var(--muted);}
 .payout-amt{font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--white);margin-top:8px;}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.sc-grid{grid-template-columns:1fr;}.payout-grid{grid-template-columns:1fr;}.input-row{grid-template-columns:1fr;}.summary-grid{grid-template-columns:1fr;}.cost-grid{grid-template-columns:1fr;}}
+@media print {
+  .topbar, .sidebar, .btn-row, .chart-tabs { display: none !important; }
+  .layout { grid-template-columns: 1fr !important; }
+  .main { padding: 0 !important; }
+  .card { break-inside: avoid; }
+}

@@ -16,7 +16,8 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
   if(u===CREDS.username && p===CREDS.password){
     loggedInUser = u;
     err.classList.remove('show');
-    showScreen('screen-calc');
+    showScreen('screen-setup');
+    updateGlobalEpisodeVisual();
     ['min','decent','max'].forEach(sc=>{
       updateEpisodeVisualFor(sc);
       updateTotalCostFor(sc);

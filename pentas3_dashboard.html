@@ -36,6 +36,47 @@
   </div>
 </div>
 
+<!-- ══ SCREEN 1.5: SETUP ══ -->
+<div class="screen" id="screen-setup" style="align-items:center;justify-content:center;">
+  <div class="calc-box" style="max-width:500px;">
+    <div class="calc-header">
+      <div class="calc-step">Step 1 of 3 — Basic Setup</div>
+      <div class="calc-title">Dramas & Episodes</div>
+      <div class="calc-sub">Set your drama count and episode structure before configuring budgets</div>
+    </div>
+
+    <div class="calc-section-title">&#127916; Number of Dramas</div>
+    <div class="form-group">
+      <div class="drama-counter">
+        <button class="counter-btn" onclick="spinGlobalDrama(-1)" type="button">&#8722;</button>
+        <div>
+          <div class="counter-val" id="global-drama-count">5</div>
+          <div class="counter-label">drama(s)</div>
+        </div>
+        <button class="counter-btn" onclick="spinGlobalDrama(1)" type="button">+</button>
+      </div>
+    </div>
+
+    <div class="calc-divider"></div>
+
+    <div class="calc-section-title">&#127916; Number of Paid Episodes <span class="free-tag">+ 3 free</span></div>
+    <div class="form-group">
+      <div class="spin-group">
+        <button class="spin-btn" onclick="spinGlobalEps(-1)" type="button">&#8722;</button>
+        <input class="spin-input" id="global-eps" type="number" min="1" max="17" value="14"/>
+        <button class="spin-btn" onclick="spinGlobalEps(1)" type="button">+</button>
+      </div>
+      <div class="episodes-visual" id="ep-visual-global"></div>
+    </div>
+
+    <div class="calc-divider"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-secondary" id="btn-setup-back" style="flex:1;padding:12px;">&#8592; Back</button>
+      <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Budget Scenarios &#8594;</button>
+    </div>
+  </div>
+</div>
+
 <div class="screen" id="screen-calc">
   <div class="calc-box" style="max-width:620px;">
     <div class="calc-header">
@@ -65,24 +106,6 @@
         </div>
         <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinEps('min',-1)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-eps-min" type="number" min="1" max="17" value="10" oninput="updateEpisodeVisualFor('min')"/>
-          <button class="spin-btn" onclick="spinEps('min',1)" type="button">+</button>
-        </div>
-        <div class="episodes-visual" id="ep-visual-min"></div>
-      </div>
-      <div class="calc-divider"></div>
-      <div class="calc-section-title">&#127916; Dramas</div>
-      <div class="form-group">
-        <div class="drama-counter">
-          <button class="counter-btn" onclick="spinDrama('min',-1)" type="button">&#8722;</button>
-          <div><div class="counter-val" id="drama-count-min">3</div><div class="counter-label">drama(s)</div></div>
-          <button class="counter-btn" onclick="spinDrama('min',1)" type="button">+</button>
-        </div>
-      </div>
       <div class="calc-divider"></div>
       <div class="calc-section-title">&#128202; Cost structure (RM)</div>
       <div class="cost-grid">
@@ -109,24 +132,6 @@
         </div>
         <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinEps('decent',-1)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-eps-decent" type="number" min="1" max="17" value="14" oninput="updateEpisodeVisualFor('decent')"/>
-          <button class="spin-btn" onclick="spinEps('decent',1)" type="button">+</button>
-        </div>
-        <div class="episodes-visual" id="ep-visual-decent"></div>
-      </div>
-      <div class="calc-divider"></div>
-      <div class="calc-section-title">&#127916; Dramas</div>
-      <div class="form-group">
-        <div class="drama-counter">
-          <button class="counter-btn" onclick="spinDrama('decent',-1)" type="button">&#8722;</button>
-          <div><div class="counter-val" id="drama-count-decent">5</div><div class="counter-label">drama(s)</div></div>
-          <button class="counter-btn" onclick="spinDrama('decent',1)" type="button">+</button>
-        </div>
-      </div>
       <div class="calc-divider"></div>
       <div class="calc-section-title">&#128202; Cost structure (RM)</div>
       <div class="cost-grid">
@@ -152,24 +157,6 @@
           <button class="spin-btn" onclick="spinPrice('max',0.10)" type="button">+</button>
         </div>
         <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Number of paid episodes <span class="free-tag">+ 3 free</span></label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinEps('max',-1)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-eps-max" type="number" min="1" max="17" value="17" oninput="updateEpisodeVisualFor('max')"/>
-          <button class="spin-btn" onclick="spinEps('max',1)" type="button">+</button>
-        </div>
-        <div class="episodes-visual" id="ep-visual-max"></div>
-      </div>
-      <div class="calc-divider"></div>
-      <div class="calc-section-title">&#127916; Dramas</div>
-      <div class="form-group">
-        <div class="drama-counter">
-          <button class="counter-btn" onclick="spinDrama('max',-1)" type="button">&#8722;</button>
-          <div><div class="counter-val" id="drama-count-max">8</div><div class="counter-label">drama(s)</div></div>
-          <button class="counter-btn" onclick="spinDrama('max',1)" type="button">+</button>
-        </div>
       </div>
       <div class="calc-divider"></div>
       <div class="calc-section-title">&#128202; Cost structure (RM)</div>
@@ -252,6 +239,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Edit Scenarios
       </button>
+  <button class="icon-btn" onclick="window.print()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="6 9 6 2 18 2 18 9"/>
+    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+    <rect x="6" y="14" width="12" height="8"/>
+  </svg>
+  Print / Save PDF
+</button>
       <button class="icon-btn" id="btn-logout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         Sign out
