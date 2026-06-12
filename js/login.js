@@ -19,7 +19,6 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
     showScreen('screen-setup');
     updateGlobalEpisodeVisual();
     ['min','decent','max'].forEach(sc=>{
-      updateEpisodeVisualFor(sc);
       updateTotalCostFor(sc);
     });
   } else {

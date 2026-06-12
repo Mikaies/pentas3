@@ -1,6 +1,6 @@
 /* GLOBAL DRAMA & EPISODE SETUP */
-let globalDramas = 5;
-let globalEps = 14;
+let globalDramas = 1;
+let globalEps = 4;
 
 function spinGlobalDrama(delta){
   globalDramas = Math.max(1, globalDramas + delta);
@@ -33,6 +33,29 @@ document.getElementById('btn-setup-back').addEventListener('click', ()=>{
 });
 
 /* ═══════════════════════════════════════════
+   SCENARIO TAB SWITCHING (wizard)
+═══════════════════════════════════════════ */
+function switchScenarioTab(tab){
+  activeScenarioTab = tab;
+  ['min','decent','max'].forEach(t=>{
+    document.getElementById('tab-'+t).className = 'sc-tab' + (t===tab?' active':'');
+    document.getElementById('sc-panel-'+t).style.display = t===tab?'':'none';
+  });
+}
+
+/* Spinner helpers */
+function spinPrice(sc, delta){
+  const el = document.getElementById('inp-price-'+sc);
+  el.value = Math.max(0.01,(parseFloat(el.value||0)+delta)).toFixed(2);
+}
+function updateTotalCostFor(sc){
+  const p = parseFloat(document.getElementById('inp-production-'+sc).value)||0;
+  const m = parseFloat(document.getElementById('inp-management-'+sc).value)||0;
+  const mk= parseFloat(document.getElementById('inp-marketing-'+sc).value)||0;
+  document.getElementById('total-cost-display-'+sc).textContent = 'RM '+(p+m+mk).toLocaleString();
+}
+
+/* ═══════════════════════════════════════════
    CALCULATE & PREVIEW
 ═══════════════════════════════════════════ */
 function readScenario(sc){
@@ -53,7 +76,6 @@ document.getElementById('btn-calculate').addEventListener('click',()=>{
     scenarios[sc] = s;
   });
 
-  // Populate summary cards
   ['min','decent','max'].forEach(sc=>{
     const s = scenarios[sc];
     const net = netProfitFor(s);
@@ -70,10 +92,9 @@ document.getElementById('btn-calculate').addEventListener('click',()=>{
 });
 
 document.getElementById('btn-back').addEventListener('click',()=>showScreen('screen-calc'));
-document.getElementById('btn-calc-back').addEventListener('click',()=>showScreen('screen-login'));
+document.getElementById('btn-calc-back').addEventListener('click',()=>showScreen('screen-setup'));
 document.getElementById('btn-back-to-summary').addEventListener('click',()=>showScreen('screen-summary'));
 document.getElementById('btn-enter-dash').addEventListener('click',()=>{
-  // Use 'decent' as default active scenario for individual dashboard pages
   cfg = { ...scenarios.decent };
   document.getElementById('topbar-username').textContent=loggedInUser;
   buildDashboard();
@@ -106,7 +127,6 @@ document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
   });
 });
 
-/* chart tab switch */
 document.querySelectorAll('.ctab[data-chart]').forEach(el=>{
   el.addEventListener('click',()=>{
     document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
@@ -117,43 +137,9 @@ document.querySelectorAll('.ctab[data-chart]').forEach(el=>{
 });
 
 /* ═══════════════════════════════════════════
-   SCENARIO TAB SWITCHING (wizard)
+   INIT
 ═══════════════════════════════════════════ */
-function switchScenarioTab(tab){
-  activeScenarioTab = tab;
-  ['min','decent','max'].forEach(t=>{
-    document.getElementById('tab-'+t).className = 'sc-tab' + (t===tab?' active':'');
-    document.getElementById('sc-panel-'+t).style.display = t===tab?'':'none';
-  });
-}
-
-/* Spinner helpers */
-function spinPrice(sc, delta){
-  const el = document.getElementById('inp-price-'+sc);
-  el.value = Math.max(0.01,(parseFloat(el.value||0)+delta)).toFixed(2);
-}
-function spinEps(sc, delta){
-  const el = document.getElementById('inp-eps-'+sc);
-  el.value = Math.min(17, Math.max(1, parseInt(el.value||0)+delta));
-  updateEpisodeVisualFor(sc);
-}
-function spinDrama(sc, delta){
-  dramaCounts[sc] = Math.max(1, dramaCounts[sc]+delta);
-  document.getElementById('drama-count-'+sc).textContent = dramaCounts[sc];
-}
-function updateTotalCostFor(sc){
-  const p = parseFloat(document.getElementById('inp-production-'+sc).value)||0;
-  const m = parseFloat(document.getElementById('inp-management-'+sc).value)||0;
-  const mk= parseFloat(document.getElementById('inp-marketing-'+sc).value)||0;
-  document.getElementById('total-cost-display-'+sc).textContent = 'RM '+(p+m+mk).toLocaleString();
-}
-function updateEpisodeVisualFor(sc){
-  const val = parseInt(document.getElementById('inp-eps-'+sc).value)||0;
-  const paid = Math.min(Math.max(val,0),17);
-  let dots='';
-  for(let i=1;i<=paid+3;i++){
-    let cls='ep-dot'; if(i<=3) cls+=' free'; else cls+=' paid';
-    dots+=`<div class="${cls}" title="Ep ${i}">${i}</div>`;
-  }
-  document.getElementById('ep-visual-'+sc).innerHTML=dots;
-}
+['min','decent','max'].forEach(sc=>{
+  updateTotalCostFor(sc);
+});
+updateGlobalEpisodeVisual();
