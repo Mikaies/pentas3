@@ -15,7 +15,7 @@
 <body>
 
 <!-- ══ SCREEN 1: LOGIN ══ -->
-<div class="screen active" id="screen-login">
+<div class="screen" id="screen-login">
   <div class="login-box">
     <div class="login-logo">
       <div class="login-logo-icon">P3</div>
@@ -37,7 +37,7 @@
 </div>
 
 <!-- ══ SCREEN 1.5: SETUP ══ -->
-<div class="screen" id="screen-setup" style="align-items:center;justify-content:center;">
+<div class="screen active" id="screen-setup" style="align-items:center;justify-content:center;">
   <div class="calc-box" style="max-width:500px;">
     <div class="calc-header">
       <div class="calc-step">Step 1 of 3 — Basic Setup</div>
@@ -71,7 +71,6 @@
 
     <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
-      <button class="btn-secondary" id="btn-setup-back" style="flex:1;padding:12px;">&#8592; Back</button>
       <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Budget Scenarios &#8594;</button>
     </div>
   </div>
@@ -80,7 +79,7 @@
 <div class="screen" id="screen-calc">
   <div class="calc-box" style="max-width:620px;">
     <div class="calc-header">
-      <div class="calc-step">Step 1 of 2 — Configure 3 Scenarios</div>
+      <div class="calc-step">Step 2 of 3 — Configure 3 Scenarios</div>
       <div class="calc-title">Budget Scenarios</div>
       <div class="calc-sub">Define Minimum, Decent and Maximum budgets to compare investment outcomes</div>
     </div>
@@ -170,7 +169,7 @@
 
     <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
-      <button class="btn-secondary" id="btn-calc-back" style="flex:1;padding:12px;">&#8592; Back to Login</button>
+      <button class="btn-secondary" id="btn-calc-back" style="flex:1;padding:12px;">&#8592; Back</button>
       <button class="btn-primary" id="btn-calculate" style="flex:3;">Preview All 3 Scenarios &#8594;</button>
     </div>
   </div>
