@@ -28,10 +28,6 @@ document.getElementById('btn-setup-next').addEventListener('click', ()=>{
   showScreen('screen-calc');
 });
 
-document.getElementById('btn-setup-back').addEventListener('click', ()=>{
-  showScreen('screen-login');
-});
-
 /* ═══════════════════════════════════════════
    SCENARIO TAB SWITCHING (wizard)
 ═══════════════════════════════════════════ */

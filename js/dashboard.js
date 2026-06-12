@@ -49,6 +49,7 @@ function switchOverviewScenario(sc){
   renderMainChart();
   renderTable();
   renderBreakEven();
+  renderProjTable();
 }
 
 /* ═══════════════════════════════════════════
