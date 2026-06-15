@@ -139,3 +139,14 @@ document.querySelectorAll('.ctab[data-chart]').forEach(el=>{
   updateTotalCostFor(sc);
 });
 updateGlobalEpisodeVisual();
+
+/* MOBILE MENU TOGGLE */
+document.getElementById('btn-mobile-menu').addEventListener('click', ()=>{
+  document.querySelector('.sidebar').classList.toggle('mobile-open');
+});
+
+document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    document.querySelector('.sidebar').classList.remove('mobile-open');
+  });
+});
