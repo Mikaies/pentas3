@@ -28,8 +28,11 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
 ['inp-user','inp-pass'].forEach(id=>{
   document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('btn-login').click(); });
 });
-document.getElementById('btn-logout').addEventListener('click',()=>{
-  document.getElementById('inp-user').value='';
-  document.getElementById('inp-pass').value='';
-  showScreen('screen-login');
+document.getElementById('btn-start-over').addEventListener('click',()=>{
+  globalDramas = 1;
+  globalEps = 4;
+  document.getElementById('global-drama-count').textContent = globalDramas;
+  document.getElementById('global-eps').value = globalEps;
+  updateGlobalEpisodeVisual();
+  showScreen('screen-setup');
 });

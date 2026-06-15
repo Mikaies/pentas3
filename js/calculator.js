@@ -22,6 +22,7 @@ function updateGlobalEpisodeVisual(){
     dots += `<div class="${cls}" title="Ep ${i}">${i}</div>`;
   }
   document.getElementById('ep-visual-global').innerHTML = dots;
+  document.getElementById('ep-total-hint').textContent = `Total: ${paid + 3} of 20 episodes per drama`;
 }
 
 document.getElementById('btn-setup-next').addEventListener('click', ()=>{
@@ -92,7 +93,6 @@ document.getElementById('btn-calc-back').addEventListener('click',()=>showScreen
 document.getElementById('btn-back-to-summary').addEventListener('click',()=>showScreen('screen-summary'));
 document.getElementById('btn-enter-dash').addEventListener('click',()=>{
   cfg = { ...scenarios.decent };
-  document.getElementById('topbar-username').textContent=loggedInUser;
   buildDashboard();
   showScreen('screen-dashboard');
 });
