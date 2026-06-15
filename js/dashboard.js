@@ -50,6 +50,10 @@ function switchOverviewScenario(sc){
   renderTable();
   renderBreakEven();
   renderProjTable();
+  buildCostCards();
+  buildCostChart();
+  renderPayoutAmounts();
+  buildPayoutTable();
 }
 
 /* ═══════════════════════════════════════════
