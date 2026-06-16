@@ -156,7 +156,7 @@ function preparePrint(){
   const today = new Date();
   const scenarioName = activeOverviewScenario.charAt(0).toUpperCase() + activeOverviewScenario.slice(1);
   document.getElementById('printHeaderMeta').innerHTML = `
-    ${today.toLocaleDateString()}<br>
+    ${today.toLocaleDateString('en-MY', {day:'numeric', month:'long', year:'numeric'})}<br>
     ${scenarioName} budget &middot; ${cfg.dramas} drama(s) &middot; RM ${cfg.price.toFixed(2)}/ep &middot; ${cfg.paidEps} paid eps
   `;
 
@@ -166,6 +166,15 @@ function preparePrint(){
   ['page-overview','page-projections','page-costs','page-payout','page-scenarios'].forEach(id=>{
     document.getElementById(id).classList.add('print-active');
   });
+
+  setTimeout(()=>{
+    [chartInst, costChartInst, payoutChartInst, scCompareChartInst, scBarChartInst].forEach(c=>{
+      if(c){
+        c.resize();
+        c.update('none');
+      }
+    });
+  }, 100);
 }
 
 window.addEventListener('beforeprint', preparePrint);
