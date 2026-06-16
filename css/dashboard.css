@@ -92,12 +92,6 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
 .payout-desc{font-size:11px;color:var(--muted);}
 .payout-amt{font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--white);margin-top:8px;}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.sc-grid{grid-template-columns:1fr;}.payout-grid{grid-template-columns:1fr;}.input-row{grid-template-columns:1fr;}.summary-grid{grid-template-columns:1fr;}.cost-grid{grid-template-columns:1fr;}}
-@media print {
-  .topbar, .sidebar, .btn-row, .chart-tabs { display: none !important; }
-  .layout { grid-template-columns: 1fr !important; }
-  .main { padding: 0 !important; }
-  .card { break-inside: avoid; }
-}
 
 /* ── SCENARIO SWITCHER ── */
 .scenario-switcher{display:flex;gap:8px;margin-bottom:1.25rem;}
@@ -141,4 +135,82 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
 
 @media(max-width:900px){
   #screen-setup{padding-top:0;align-items:flex-start;padding-top:1rem;}
+}
+
+.logo-icon-img{width:36px;height:auto;flex-shrink:0;}
+
+.print-header{display:none;}
+.print-footer{display:none;}
+
+@media print {
+  .topbar, .sidebar, .scenario-switcher, .chart-tabs,
+  #btn-mobile-menu, .breakeven-bar-wrap, .icon-btn {
+    display: none !important;
+  }
+
+  @page { margin: 1.2cm; size: A4; }
+
+  body { background: #ffffff !important; color: #1a1a1a !important; font-size: 11px; }
+  .layout { grid-template-columns: 1fr !important; }
+  .main { padding: 0 !important; }
+
+  .print-header{
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #D4AF37;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .print-header-left{display:flex;align-items:center;gap:8px;}
+  .print-logo{width:28px;height:28px;border-radius:6px;background:#BE1E2D;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;}
+  .print-logo-img{width:32px;height:auto;flex-shrink:0;}
+  .print-title{font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.1;}
+  .print-subtitle{font-family:var(--font-serif);font-style:italic;font-size:10px;color:#BE1E2D;line-height:1.1;}
+  .print-header-right{text-align:right;font-size:9px;color:#888;line-height:1.5;}
+
+  .print-footer{
+    display:block !important;
+    font-size:9px;color:#aaa;text-align:center;
+    border-top:0.5px solid #eee;padding-top:6px;margin-top:14px;
+  }
+
+  .page { display: none !important; }
+  .page.print-active { display: block !important; page-break-after: always; }
+  .page.print-active:last-of-type { page-break-after: auto; }
+
+  .page-title{color:#BE1E2D !important;border-bottom:2px solid #D4AF37;padding-bottom:6px;margin-bottom:10px;font-size:14px;}
+  .page-sub{color:#999 !important;font-size:10px;}
+
+  .card { page-break-inside: avoid; border: 0.5px solid #ddd !important; background: #fafafa !important; margin-bottom: 12px; padding: 10px; }
+  .card-title{color:#BE1E2D !important;font-size:11px;}
+
+  .metric-card { border: 0.5px solid #ddd !important; background: #fafafa !important; padding: 8px; }
+  .metric-card.gold-accent { border-color: #D4AF37 !important; background: #fdfaf0 !important; }
+  .metric-card.red-accent { border-color: #BE1E2D !important; background: #fdf0f0 !important; }
+  .metric-val { color: #1a1a1a !important; font-size: 16px; }
+  .metric-val.pos { color: #B8860B !important; }
+  .metric-val.neg { color: #BE1E2D !important; }
+  .metric-label, .metric-note { color: #888 !important; }
+
+  .config-banner { background: #fdfaf0 !important; border: 0.5px solid #D4AF37 !important; }
+  .config-tag, .config-tag strong { color: #1a1a1a !important; }
+
+  .breakeven-card { border: 0.5px solid #D4AF37 !important; background: #fdfaf0 !important; }
+  .breakeven-title, .breakeven-stat, .breakeven-status { color: #1a1a1a !important; }
+
+  table { font-size: 9px; }
+  th { background: #BE1E2D !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  td { color: #1a1a1a !important; border-bottom: 0.5px solid #eee !important; }
+  .pos-val { color: #B8860B !important; }
+  .neg-val { color: #BE1E2D !important; }
+  tbody tr:last-child td { background: #faf8f0 !important; -webkit-print-color-adjust: exact; }
+
+  .sc-card-full, .payout-card { border: 0.5px solid #ddd !important; background: #fafafa !important; }
+  .payout-pct.gold { color: #D4AF37 !important; }
+  .payout-pct.red { color: #BE1E2D !important; }
+
+  canvas { max-height: 160px !important; }
+
+  .sc-summary-grid, .summary-grid, .btn-row, .scenario-tabs { display: none !important; }
 }

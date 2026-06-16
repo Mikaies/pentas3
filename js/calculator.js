@@ -150,3 +150,25 @@ document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     document.querySelector('.sidebar').classList.remove('mobile-open');
   });
 });
+
+/* ── PRINT SETUP ── */
+function preparePrint(){
+  const today = new Date();
+  const scenarioName = activeOverviewScenario.charAt(0).toUpperCase() + activeOverviewScenario.slice(1);
+  document.getElementById('printHeaderMeta').innerHTML = `
+    ${today.toLocaleDateString()}<br>
+    ${scenarioName} budget &middot; ${cfg.dramas} drama(s) &middot; RM ${cfg.price.toFixed(2)}/ep &middot; ${cfg.paidEps} paid eps
+  `;
+
+  buildScenariosPage();
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('print-active'));
+  ['page-overview','page-projections','page-costs','page-payout','page-scenarios'].forEach(id=>{
+    document.getElementById(id).classList.add('print-active');
+  });
+}
+
+window.addEventListener('beforeprint', preparePrint);
+window.addEventListener('afterprint', ()=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('print-active'));
+});

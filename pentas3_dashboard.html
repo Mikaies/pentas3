@@ -223,9 +223,9 @@
 <div class="screen" id="screen-dashboard" style="flex-direction:column;">
   <header class="topbar">
     <div class="logo">
-      <div class="logo-icon">P3</div>
+      <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" class="logo-icon-img"/>
       <div>
-        <div class="logo-name">Pentas3</div>
+        <div class="logo-name">PENTAS<span style="color:var(--crimson)">3</span></div>
         <div class="logo-sub">Financial Dashboard</div>
       </div>
     </div>
@@ -279,6 +279,19 @@
       <div class="sc-pills" id="configPills"></div>
     </aside>
     <main class="main">
+
+
+      <!-- PRINT HEADER (shown only when printing) -->
+  <div class="print-header">
+    <div class="print-header-left">
+      <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" class="print-logo-img"/>
+      <div>
+        <div class="print-title">PENTAS<span style="color:#BE1E2D">3</span></div>
+        <div class="print-subtitle">Financial dashboard report</div>
+      </div>
+    </div>
+    <div class="print-header-right" id="printHeaderMeta"></div>
+  </div>
 
       <!-- OVERVIEW -->
   <div class="page active" id="page-overview">
@@ -425,6 +438,8 @@
           </div>
         </div>
       </div>
+
+      <div class="print-footer">Pentas3 Financial Dashboard Report</div>
 
     </main>
   </div>
