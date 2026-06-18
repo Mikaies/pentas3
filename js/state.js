@@ -15,6 +15,7 @@ let cfg = { ...scenarios.decent };
 let currentChart = 'revenue';
 let chartInst = null;
 let costChartInst = null;
+let payoutChartInst = null;
 let scCompareChartInst = null;
 let scBarChartInst = null;
 let isLight = false;

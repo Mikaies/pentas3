@@ -151,9 +151,10 @@ function renderPayoutAmounts(){
 }
 
 function buildPayoutChart(){
+  if(payoutChartInst){ payoutChartInst.destroy(); payoutChartInst=null; }
   const ctx=document.getElementById('payoutChart').getContext('2d');
   const net=Math.max(0,netProfit());
-  new Chart(ctx,{
+  payoutChartInst = new Chart(ctx,{
     type:'doughnut',
     data:{
       labels:['Producer (80%)','Director (20%)'],

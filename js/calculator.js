@@ -160,24 +160,75 @@ function preparePrint(){
     ${scenarioName} budget &middot; ${cfg.dramas} drama(s) &middot; RM ${cfg.price.toFixed(2)}/ep &middot; ${cfg.paidEps} paid eps
   `;
 
-  buildScenariosPage();
-
+  // STEP 1: make every page visible FIRST so canvases have real dimensions
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('print-active'));
   ['page-overview','page-projections','page-costs','page-payout','page-scenarios'].forEach(id=>{
     document.getElementById(id).classList.add('print-active');
   });
 
-  setTimeout(()=>{
-    [chartInst, costChartInst, payoutChartInst, scCompareChartInst, scBarChartInst].forEach(c=>{
-      if(c){
-        c.resize();
-        c.update('none');
-      }
-    });
-  }, 100);
+  // STEP 2: force every page block-visible (overrides .page{display:none})
+  document.querySelectorAll('.page').forEach(p=>{ p.style.display='block'; });
 }
 
-window.addEventListener('beforeprint', preparePrint);
+function snapshotChartsForPrint(){
+  // Convert all canvas charts to images for printing
+  const canvases = document.querySelectorAll('canvas');
+  canvases.forEach(canvas=>{
+    try {
+      if(canvas.width === 0 || canvas.height === 0) return;
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png');
+      img.style.width = '100%';
+      img.style.maxHeight = '200px';
+      img.style.objectFit = 'contain';
+      img.className = 'print-chart-img';
+      canvas.parentNode.insertBefore(img, canvas.nextSibling);
+      canvas.style.display = 'none';
+    } catch(e){
+      console.log('canvas error', e);
+    }
+  });
+}
+
+
+document.getElementById('btn-print-pdf').addEventListener('click', (e)=>{
+  e.preventDefault();
+
+  preparePrint();
+
+  // Wait one frame for layout to settle with pages now visible, THEN build charts
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      buildCostCards();
+      buildCostChart();
+      renderPayoutAmounts();
+      buildPayoutChart();
+      buildPayoutTable();
+      buildScenariosPage();
+      renderMainChart();
+
+      setTimeout(()=>{
+        snapshotChartsForPrint();
+        setTimeout(()=>{
+          window.print();
+        }, 200);
+      }, 500);
+    });
+  });
+});
+
 window.addEventListener('afterprint', ()=>{
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('print-active'));
+  document.querySelectorAll('.page').forEach(p=>{
+    p.classList.remove('print-active');
+    p.style.display = '';
+  });
+
+  // Restore canvases after printing
+  document.querySelectorAll('.print-chart-img').forEach(img=>img.remove());
+  document.querySelectorAll('canvas').forEach(canvas=>{
+    canvas.style.display = '';
+  });
+
+  // Re-render whatever page is actually active again
+  renderMainChart();
 });
