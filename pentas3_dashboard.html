@@ -16,24 +16,51 @@
 <body>
 
 <!-- ══ SCREEN 1: LOGIN ══ -->
-<div class="screen" id="screen-login">
+<div class="screen active" id="screen-login">
   <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-icon">P3</div>
+      <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" style="width:52px;height:auto;margin-bottom:10px;"/>
       <div class="login-title">Pentas3</div>
       <div class="login-sub">Theater in Your Pocket</div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="inp-user">Username</label>
-      <input class="form-input" id="inp-user" type="text" placeholder="Enter username" autocomplete="username"/>
+
+    <!-- TAB SWITCHER -->
+    <div style="display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;">
+      <button class="sc-tab active" id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;">Sign In</button>
+      <button class="sc-tab" id="tab-register" onclick="switchAuthTab('register')" style="flex:1;">Register</button>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="inp-pass">Password</label>
-      <input class="form-input" id="inp-pass" type="password" placeholder="Enter password" autocomplete="current-password"/>
-      <div class="form-error" id="login-error">Incorrect username or password. Please try again.</div>
+
+    <!-- SIGN IN FORM -->
+    <div id="panel-signin">
+      <div class="form-group">
+        <label class="form-label" for="inp-email">Email</label>
+        <input class="form-input" id="inp-email" type="email" placeholder="Enter your email" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-pass">Password</label>
+        <input class="form-input" id="inp-pass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
+        <div class="form-error" id="login-error"></div>
+      </div>
+      <button class="btn-primary" id="btn-login">Sign In</button>
     </div>
-    <button class="btn-primary" id="btn-login">Sign In</button>
-    <div class="login-hint">Credentials: <span>admin</span> / <span>pentas3</span></div>
+
+    <!-- REGISTER FORM -->
+    <div id="panel-register" style="display:none;">
+      <div class="form-group">
+        <label class="form-label" for="inp-reg-name">Your Name</label>
+        <input class="form-input" id="inp-reg-name" type="text" placeholder="What should we call you?"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-reg-email">Email</label>
+        <input class="form-input" id="inp-reg-email" type="email" placeholder="Enter your email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-reg-pass">Password</label>
+        <input class="form-input" id="inp-reg-pass" type="password" placeholder="Create a password"/>
+        <div class="form-error" id="register-error"></div>
+      </div>
+      <button class="btn-primary" id="btn-register">Create Account</button>
+    </div>
   </div>
 </div>
 
@@ -235,6 +262,7 @@
       Menu
     </button>
     <div class="topbar-right">
+      <div class="topbar-user" id="topbarUserName" style="display:none;"></div>
       <button class="icon-btn" id="btn-mode">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         Light mode
@@ -254,6 +282,10 @@
       <button class="icon-btn" id="btn-start-over">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         Start Over
+      </button>
+      <button class="icon-btn" id="btn-logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
       </button>
     </div>
   </header>
@@ -447,7 +479,8 @@
 </div>
 
 <script src="js/state.js"></script>
-<script src="js/login.js"></script>
+<script type="module" src="js/firebase.js"></script>
+<script type="module" src="js/login.js"></script>
 <script src="js/calculator.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/charts.js"></script>

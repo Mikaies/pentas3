@@ -1,3 +1,5 @@
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, getGreeting, saveUserData, loadUserData } from './firebase.js';
+
 /* ═══════════════════════════════════════════
    SCREEN SWITCHING
 ═══════════════════════════════════════════ */
@@ -6,7 +8,15 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
 }
 
-// Admin bypass — skip greeting if ?admin=true in URL
+/* ── AUTH TAB SWITCHING ── */
+function switchAuthTab(tab){
+  ['signin','register'].forEach(t=>{
+    document.getElementById('tab-'+t).className = 'sc-tab'+(t===tab?' active':'');
+    document.getElementById('panel-'+t).style.display = t===tab?'':'none';
+  });
+}
+
+/* ── ADMIN BYPASS ── */
 const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
 if(isAdmin){
   showScreen('screen-setup');
@@ -14,28 +24,78 @@ if(isAdmin){
   ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
 }
 
-/* ═══════════════════════════════════════════
-   LOGIN
-═══════════════════════════════════════════ */
-document.getElementById('btn-login').addEventListener('click', ()=>{
-  const u = document.getElementById('inp-user').value.trim();
-  const p = document.getElementById('inp-pass').value;
+/* ── SIGN IN ── */
+document.getElementById('btn-login').addEventListener('click', async ()=>{
+  const email = document.getElementById('inp-email').value.trim();
+  const pass = document.getElementById('inp-pass').value;
   const err = document.getElementById('login-error');
-  if(u===CREDS.username && p===CREDS.password){
-    loggedInUser = u;
-    err.classList.remove('show');
+  err.textContent = '';
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    const data = await loadUserData(cred.user.uid);
+    if(data){
+      userName = data.name || email;
+      if(data.scenarios) scenarios = data.scenarios;
+      if(data.globalDramas) globalDramas = data.globalDramas;
+      if(data.globalEps) globalEps = data.globalEps;
+    } else {
+      userName = email;
+    }
+    showGreeting(userName);
     showScreen('screen-setup');
     updateGlobalEpisodeVisual();
-    ['min','decent','max'].forEach(sc=>{
-      updateTotalCostFor(sc);
-    });
-  } else {
+    ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
+  } catch(e){
+    err.textContent = 'Incorrect email or password. Please try again.';
     err.classList.add('show');
   }
 });
-['inp-user','inp-pass'].forEach(id=>{
-  document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('btn-login').click(); });
+
+/* ── REGISTER ── */
+document.getElementById('btn-register').addEventListener('click', async ()=>{
+  const name = document.getElementById('inp-reg-name').value.trim();
+  const email = document.getElementById('inp-reg-email').value.trim();
+  const pass = document.getElementById('inp-reg-pass').value;
+  const err = document.getElementById('register-error');
+  err.textContent = '';
+  if(!name){ err.textContent = 'Please enter your name.'; err.classList.add('show'); return; }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await saveUserData(cred.user.uid, { name, email });
+    userName = name;
+    showGreeting(userName);
+    showScreen('screen-setup');
+    updateGlobalEpisodeVisual();
+    ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
+  } catch(e){
+    err.textContent = e.message;
+    err.classList.add('show');
+  }
 });
+
+/* ── GREETING ── */
+function showGreeting(name){
+  const greeting = getGreeting();
+  const pill = document.getElementById('topbarUserName');
+  if(pill){
+    pill.textContent = `${greeting}, ${name}!`;
+    pill.style.display = '';
+  }
+}
+
+/* ── SIGN OUT ── */
+document.getElementById('btn-logout').addEventListener('click', async ()=>{
+  await signOut(auth);
+  userName = '';
+  resetScenariosToDefault();
+  globalDramas = 1;
+  globalEps = 4;
+  const pill = document.getElementById('topbarUserName');
+  if(pill){ pill.style.display = 'none'; }
+  showScreen('screen-login');
+});
+
+/* ── START OVER ── */
 document.getElementById('btn-start-over').addEventListener('click',()=>{
   globalDramas = 1;
   globalEps = 4;
@@ -43,4 +103,18 @@ document.getElementById('btn-start-over').addEventListener('click',()=>{
   document.getElementById('global-eps').value = globalEps;
   updateGlobalEpisodeVisual();
   showScreen('screen-setup');
+});
+
+/* ── AUTO SAVE when entering dashboard ── */
+document.getElementById('btn-enter-dash').addEventListener('click', async ()=>{
+  cfg = { ...scenarios.decent };
+  buildDashboard();
+  showScreen('screen-dashboard');
+  if(auth.currentUser){
+    await saveUserData(auth.currentUser.uid, {
+      scenarios,
+      globalDramas,
+      globalEps,
+    });
+  }
 });

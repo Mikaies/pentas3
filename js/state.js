@@ -1,15 +1,21 @@
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
-const CREDS = { username:'admin', password:'pentas3' };
+let userName = '';
 
-// Three scenarios stored here
-let scenarios = {
+const DEFAULT_SCENARIOS = {
   min:    { price:0.30, paidEps:10, dramas:3,  production:8000,  management:15000, marketing:5000  },
   decent: { price:0.40, paidEps:14, dramas:5,  production:15000, management:30000, marketing:10000 },
   max:    { price:0.50, paidEps:17, dramas:8,  production:30000, management:50000, marketing:25000 }
 };
-// Active scenario driving the dashboard
+
+let scenarios = JSON.parse(JSON.stringify(DEFAULT_SCENARIOS));
+
+function resetScenariosToDefault(){
+  scenarios = JSON.parse(JSON.stringify(DEFAULT_SCENARIOS));
+  cfg = { ...scenarios.decent };
+}
+
 let cfg = { ...scenarios.decent };
 
 let currentChart = 'revenue';
@@ -19,7 +25,6 @@ let payoutChartInst = null;
 let scCompareChartInst = null;
 let scBarChartInst = null;
 let isLight = false;
-let loggedInUser = '';
 
 // Per-scenario drama counters
 let dramaCounts = { min:3, decent:5, max:8 };
