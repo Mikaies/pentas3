@@ -1,8 +1,4 @@
 // ── FIREBASE SETUP ──
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCgDS-bePAeHBPRwfI2xLT7rvKEAI7mBC8",
   authDomain: "pentas3-dashboard.firebaseapp.com",
@@ -13,9 +9,10 @@ const firebaseConfig = {
   measurementId: "G-85PJXLQZKR"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Load Firebase from CDN
+const fbApp = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 // ── TIME-BASED GREETING ──
 function getGreeting(){
@@ -26,25 +23,23 @@ function getGreeting(){
   return 'Good Night';
 }
 
-// ── SAVE USER DATA TO FIRESTORE ──
+// ── SAVE USER DATA ──
 async function saveUserData(uid, data){
   try {
-    await setDoc(doc(db, 'users', uid), data, { merge: true });
+    await db.collection('users').doc(uid).set(data, { merge: true });
   } catch(e){
     console.error('Error saving data:', e);
   }
 }
 
-// ── LOAD USER DATA FROM FIRESTORE ──
+// ── LOAD USER DATA ──
 async function loadUserData(uid){
   try {
-    const snap = await getDoc(doc(db, 'users', uid));
-    if(snap.exists()) return snap.data();
+    const snap = await db.collection('users').doc(uid).get();
+    if(snap.exists) return snap.data();
     return null;
   } catch(e){
     console.error('Error loading data:', e);
     return null;
   }
 }
-
-export { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, getGreeting, saveUserData, loadUserData };

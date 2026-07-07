@@ -1,5 +1,3 @@
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, getGreeting, saveUserData, loadUserData } from './firebase.js';
-
 /* ═══════════════════════════════════════════
    SCREEN SWITCHING
 ═══════════════════════════════════════════ */
@@ -16,17 +14,24 @@ function switchAuthTab(tab){
   });
 }
 
-/* ── ADMIN BYPASS ── */
-const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+/* ── GREETING ── */
+function showGreeting(name){
+  const greeting = getGreeting();
+  const pill = document.getElementById('topbarUserName');
+  if(pill){
+    pill.textContent = `${greeting}, ${name}!`;
+    pill.style.display = '';
+  }
+}
 
-// Run everything after DOM is ready
 document.addEventListener('DOMContentLoaded', ()=>{
 
   // Wire up tabs
   document.getElementById('tab-signin').addEventListener('click', ()=>switchAuthTab('signin'));
   document.getElementById('tab-register').addEventListener('click', ()=>switchAuthTab('register'));
 
-  // Admin bypass — show admin welcome screen immediately
+  /* ── ADMIN BYPASS ── */
+  const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
   if(isAdmin){
     showScreen('screen-admin');
   }
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const err = document.getElementById('login-error');
     err.textContent = '';
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const cred = await auth.signInWithEmailAndPassword(email, pass);
       const data = await loadUserData(cred.user.uid);
       if(data){
         userName = data.name || email;
@@ -73,7 +78,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     err.textContent = '';
     if(!name){ err.textContent = 'Please enter your name.'; err.classList.add('show'); return; }
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await saveUserData(cred.user.uid, { name, email });
       userName = name;
       showGreeting(userName);
@@ -88,7 +93,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   /* ── SIGN OUT ── */
   document.getElementById('btn-logout').addEventListener('click', async ()=>{
-    await signOut(auth);
+    await auth.signOut();
     userName = '';
     resetScenariosToDefault();
     globalDramas = 1;
@@ -123,13 +128,3 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
 });
-
-/* ── GREETING ── */
-function showGreeting(name){
-  const greeting = getGreeting();
-  const pill = document.getElementById('topbarUserName');
-  if(pill){
-    pill.textContent = `${greeting}, ${name}!`;
-    pill.style.display = '';
-  }
-}
