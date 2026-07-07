@@ -6,6 +6,14 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
 }
 
+// Admin bypass — skip greeting if ?admin=true in URL
+const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+if(isAdmin){
+  showScreen('screen-setup');
+  updateGlobalEpisodeVisual();
+  ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
+}
+
 /* ═══════════════════════════════════════════
    LOGIN
 ═══════════════════════════════════════════ */
