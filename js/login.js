@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
   if(isAdmin){
     showScreen('screen-admin');
+    // Hide sign out button for admin
+    const logoutBtn = document.getElementById('btn-logout');
+    if(logoutBtn) logoutBtn.style.display = 'none';
   }
 
   document.getElementById('btn-admin-enter').addEventListener('click', ()=>{
@@ -91,8 +94,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  /* ── SIGN OUT ── */
+ /* ── SIGN OUT ── */
   document.getElementById('btn-logout').addEventListener('click', async ()=>{
+    if(isAdmin) return; // admin has no sign out
     await auth.signOut();
     userName = '';
     resetScenariosToDefault();
@@ -103,13 +107,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     showScreen('screen-login');
   });
 
-  /* ── START OVER ── */
+/* ── START OVER ── */
   document.getElementById('btn-start-over').addEventListener('click',()=>{
     globalDramas = 1;
     globalEps = 4;
     document.getElementById('global-drama-count').textContent = globalDramas;
     document.getElementById('global-eps').value = globalEps;
     updateGlobalEpisodeVisual();
+    resetScenariosToDefault();
     showScreen('screen-setup');
   });
 
