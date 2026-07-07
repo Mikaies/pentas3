@@ -20,14 +20,14 @@
   <div class="login-box">
     <div class="login-logo">
       <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" style="width:52px;height:auto;margin-bottom:10px;"/>
-      <div class="login-title">Pentas3</div>
-      <div class="login-sub">Theater in Your Pocket</div>
+      <div class="login-title">Pentas3 Dashboard</div>
+      <div class="login-sub">User Login</div>
     </div>
 
     <!-- TAB SWITCHER -->
     <div style="display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;">
-      <button class="sc-tab active" id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;">Sign In</button>
-      <button class="sc-tab" id="tab-register" onclick="switchAuthTab('register')" style="flex:1;">Register</button>
+      <button class="sc-tab active" id="tab-signin" id="tab-signin" style="flex:1;">Sign In</button>
+      <button class="sc-tab" id="tab-register" style="flex:1;">Register</button>
     </div>
 
     <!-- SIGN IN FORM -->
@@ -63,6 +63,27 @@
     </div>
   </div>
 </div>
+
+<!-- ══ SCREEN ADMIN WELCOME ══ -->
+<div class="screen" id="screen-admin">
+  <div class="login-box" style="text-align:center;">
+    <div class="login-logo">
+      <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" style="width:64px;height:auto;margin-bottom:14px;"/>
+      <div class="login-title">Pentas3 Dashboard</div>
+      <div class="login-sub">Admin Panel</div>
+    </div>
+    <div style="margin:1.5rem 0;padding:1rem;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:var(--radius);">
+      <div style="font-size:11px;color:var(--muted2);line-height:1.7;">
+        You are accessing as <strong style="color:var(--gold);">Administrator</strong>.<br/>
+        Full access to all dashboard features.
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-admin-enter">Enter Dashboard →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 1.5: SETUP ══ -->
+<div class="screen" id="screen-setup" style="align-items:center;justify-content:center;">
 
 <!-- ══ SCREEN 1.5: SETUP ══ -->
 <div class="screen active" id="screen-setup" style="align-items:center;justify-content:center;">
