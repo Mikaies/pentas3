@@ -104,6 +104,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
     globalEps = 4;
     const pill = document.getElementById('topbarUserName');
     if(pill){ pill.style.display = 'none'; }
+    // Clear all fields and reset to sign in tab
+    document.getElementById('inp-email').value = '';
+    document.getElementById('inp-pass').value = '';
+    document.getElementById('inp-reg-name').value = '';
+    document.getElementById('inp-reg-email').value = '';
+    document.getElementById('inp-reg-pass').value = '';
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('login-error').classList.remove('show');
+    document.getElementById('register-error').textContent = '';
+    document.getElementById('register-error').classList.remove('show');
+    switchAuthTab('signin');
     showScreen('screen-login');
   });
 
