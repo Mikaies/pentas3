@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const cred = await auth.signInWithEmailAndPassword(email, pass);
       const data = await loadUserData(cred.user.uid);
       if(data){
-        userName = data.name || email;
+        userName = data.name || data.email || email;
         if(data.scenarios) scenarios = data.scenarios;
         if(data.globalDramas) globalDramas = data.globalDramas;
         if(data.globalEps) globalEps = data.globalEps;
@@ -94,9 +94,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
- /* ── SIGN OUT ── */
+/* ── SIGN OUT ── */
   document.getElementById('btn-logout').addEventListener('click', async ()=>{
-    if(isAdmin) return; // admin has no sign out
+    if(isAdmin) return;
     await auth.signOut();
     userName = '';
     resetScenariosToDefault();
@@ -105,6 +105,54 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const pill = document.getElementById('topbarUserName');
     if(pill){ pill.style.display = 'none'; }
     showScreen('screen-login');
+  });
+
+  /* ── PROFILE MODAL ── */
+  document.getElementById('btn-profile').addEventListener('click', ()=>{
+    document.getElementById('inp-profile-name').value = userName || '';
+    document.getElementById('inp-profile-email').value = auth.currentUser ? auth.currentUser.email : '';
+    document.getElementById('profile-error').textContent = '';
+    document.getElementById('profile-success').textContent = '';
+    const modal = document.getElementById('profileModal');
+    modal.style.display = 'flex';
+  });
+
+  document.getElementById('btn-profile-save').addEventListener('click', async ()=>{
+    const newName = document.getElementById('inp-profile-name').value.trim();
+    const newEmail = document.getElementById('inp-profile-email').value.trim();
+    const pass = document.getElementById('inp-profile-pass').value;
+    const errEl = document.getElementById('profile-error');
+    const successEl = document.getElementById('profile-success');
+    errEl.textContent = '';
+    errEl.classList.remove('show');
+    successEl.textContent = '';
+
+    if(!newName){ errEl.textContent = 'Please enter a name.'; errEl.classList.add('show'); return; }
+
+    try {
+      const user = auth.currentUser;
+      const emailChanged = newEmail !== user.email;
+
+      if(emailChanged){
+        if(!pass){ errEl.textContent = 'Please enter your current password to change email.'; errEl.classList.add('show'); return; }
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, pass);
+        await user.reauthenticateWithCredential(credential);
+        await user.updateEmail(newEmail);
+      }
+
+      await saveUserData(user.uid, { name: newName, email: newEmail });
+      userName = newName;
+      showGreeting(userName);
+      successEl.textContent = 'Profile updated successfully!';
+    } catch(e){
+      let msg = 'Something went wrong. Please try again.';
+      if(e.code === 'auth/wrong-password') msg = 'Incorrect current password.';
+      else if(e.code === 'auth/email-already-in-use') msg = 'This email is already in use.';
+      else if(e.code === 'auth/invalid-email') msg = 'Please enter a valid email.';
+      else if(e.code === 'auth/requires-recent-login') msg = 'Please sign out and sign in again before changing your email.';
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+    }
   });
 
 /* ── START OVER ── */
@@ -133,3 +181,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
 });
+
+function closeProfileModal(){
+  document.getElementById('profileModal').style.display = 'none';
+}
