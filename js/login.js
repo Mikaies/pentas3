@@ -107,20 +107,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
     showScreen('screen-login');
   });
 
-  /* ── PROFILE MODAL ── */
+/* ── PROFILE MODAL ── */
   document.getElementById('btn-profile').addEventListener('click', ()=>{
     document.getElementById('inp-profile-name').value = userName || '';
     document.getElementById('inp-profile-email').value = auth.currentUser ? auth.currentUser.email : '';
+    document.getElementById('inp-profile-currpass').value = '';
+    document.getElementById('inp-profile-newpass').value = '';
+    document.getElementById('inp-profile-currpass2').value = '';
     document.getElementById('profile-error').textContent = '';
+    document.getElementById('profile-error').classList.remove('show');
     document.getElementById('profile-success').textContent = '';
-    const modal = document.getElementById('profileModal');
-    modal.style.display = 'flex';
+    document.getElementById('profileModal').style.display = 'flex';
   });
 
   document.getElementById('btn-profile-save').addEventListener('click', async ()=>{
     const newName = document.getElementById('inp-profile-name').value.trim();
     const newEmail = document.getElementById('inp-profile-email').value.trim();
-    const pass = document.getElementById('inp-profile-pass').value;
+    const currPass = document.getElementById('inp-profile-currpass').value;
+    const newPass = document.getElementById('inp-profile-newpass').value;
+    const currPass2 = document.getElementById('inp-profile-currpass2').value;
     const errEl = document.getElementById('profile-error');
     const successEl = document.getElementById('profile-success');
     errEl.textContent = '';
@@ -129,28 +134,56 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     if(!newName){ errEl.textContent = 'Please enter a name.'; errEl.classList.add('show'); return; }
 
+    const user = auth.currentUser;
+    const emailChanged = newEmail && newEmail !== user.email;
+    const passwordChanged = newPass && newPass.length > 0;
+    let messages = [];
+
     try {
-      const user = auth.currentUser;
-      const emailChanged = newEmail !== user.email;
-
-      if(emailChanged){
-        if(!pass){ errEl.textContent = 'Please enter your current password to change email.'; errEl.classList.add('show'); return; }
-        const credential = firebase.auth.EmailAuthProvider.credential(user.email, pass);
-        await user.reauthenticateWithCredential(credential);
-        await user.updateEmail(newEmail);
-      }
-
-      await saveUserData(user.uid, { name: newName, email: newEmail });
+      // Update name
+      await updateUserName(newName);
       userName = newName;
       showGreeting(userName);
-      successEl.textContent = 'Profile updated successfully!';
+      messages.push('Name updated');
+
+      // Update email if changed
+      if(emailChanged){
+        if(!currPass){ errEl.textContent = 'Please enter your current password to change email.'; errEl.classList.add('show'); return; }
+        try {
+          await updateUserEmail(newEmail, currPass);
+          messages.push('Email updated');
+        } catch(e){
+          let msg = 'Email update failed.';
+          if(e.code === 'auth/wrong-password') msg = 'Incorrect current password for email change.';
+          else if(e.code === 'auth/email-already-in-use') msg = 'This email is already in use.';
+          else if(e.code === 'auth/requires-recent-login') msg = 'Please sign out and sign in again to change email.';
+          errEl.textContent = msg;
+          errEl.classList.add('show');
+          return;
+        }
+      }
+
+      // Update password if filled
+      if(passwordChanged){
+        if(newPass.length < 6){ errEl.textContent = 'New password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+        if(!currPass2){ errEl.textContent = 'Please enter your current password to change password.'; errEl.classList.add('show'); return; }
+        try {
+          await updateUserPassword(newPass, currPass2);
+          messages.push('Password updated');
+        } catch(e){
+          let msg = 'Password update failed.';
+          if(e.code === 'auth/wrong-password') msg = 'Incorrect current password for password change.';
+          else if(e.code === 'auth/requires-recent-login') msg = 'Please sign out and sign in again to change password.';
+          errEl.textContent = msg;
+          errEl.classList.add('show');
+          return;
+        }
+      }
+
+      successEl.textContent = messages.join(' · ') + ' successfully!';
+
     } catch(e){
-      let msg = 'Something went wrong. Please try again.';
-      if(e.code === 'auth/wrong-password') msg = 'Incorrect current password.';
-      else if(e.code === 'auth/email-already-in-use') msg = 'This email is already in use.';
-      else if(e.code === 'auth/invalid-email') msg = 'Please enter a valid email.';
-      else if(e.code === 'auth/requires-recent-login') msg = 'Please sign out and sign in again before changing your email.';
-      errEl.textContent = msg;
+      errEl.textContent = 'Something went wrong. Please try again.';
       errEl.classList.add('show');
     }
   });

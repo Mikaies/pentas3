@@ -9,7 +9,6 @@ const firebaseConfig = {
   measurementId: "G-85PJXLQZKR"
 };
 
-// Load Firebase from CDN
 const fbApp = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -42,4 +41,32 @@ async function loadUserData(uid){
     console.error('Error loading data:', e);
     return null;
   }
+}
+
+// ── RE-AUTHENTICATE USER ──
+async function reauthUser(currentPassword){
+  const user = auth.currentUser;
+  const credential = firebase.auth.EmailAuthProvider.credential(
+    user.email,
+    currentPassword
+  );
+  await user.reauthenticateWithCredential(credential);
+}
+
+// ── UPDATE EMAIL IN FIREBASE AUTH + FIRESTORE ──
+async function updateUserEmail(newEmail, currentPassword){
+  await reauthUser(currentPassword);
+  await auth.currentUser.updateEmail(newEmail);
+  await saveUserData(auth.currentUser.uid, { email: newEmail });
+}
+
+// ── UPDATE PASSWORD IN FIREBASE AUTH ──
+async function updateUserPassword(newPassword, currentPassword){
+  await reauthUser(currentPassword);
+  await auth.currentUser.updatePassword(newPassword);
+}
+
+// ── UPDATE DISPLAY NAME IN FIRESTORE ──
+async function updateUserName(newName){
+  await saveUserData(auth.currentUser.uid, { name: newName });
 }
