@@ -14,13 +14,22 @@ function switchAuthTab(tab){
   });
 }
 
-/* ── GREETING ── */
 function showGreeting(name){
   const greeting = getGreeting();
+
+  // Topbar red pill
   const pill = document.getElementById('topbarUserName');
   if(pill){
     pill.textContent = `${greeting}, ${name}!`;
     pill.style.display = '';
+  }
+
+  // Setup screen greeting
+  const setupGreeting = document.getElementById('setupGreeting');
+  const setupGreetingText = document.getElementById('setupGreetingText');
+  if(setupGreeting && setupGreetingText){
+    setupGreetingText.textContent = `${greeting}, ${name}! Let's configure your dashboard.`;
+    setupGreeting.style.display = '';
   }
 }
 
