@@ -219,16 +219,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
     showScreen('screen-setup');
   });
 
-  /* ── AUTO SAVE when entering dashboard ── */
+/* ── AUTO SAVE when entering dashboard ── */
   document.getElementById('btn-enter-dash').addEventListener('click', async ()=>{
     cfg = { ...scenarios.decent };
     buildDashboard();
     showScreen('screen-dashboard');
     if(auth.currentUser){
+      const netProfit = netProfitFor(scenarios.decent);
       await saveUserData(auth.currentUser.uid, {
         scenarios,
         globalDramas,
         globalEps,
+      });
+      await saveHistoryEntry(auth.currentUser.uid, {
+        dramas: globalDramas,
+        paidEps: globalEps,
+        price: scenarios.decent.price,
+        fixedCost: totalFixedFor(scenarios.decent),
+        netProfit: netProfit,
+        scenarios: scenarios,
       });
     }
   });

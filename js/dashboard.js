@@ -173,3 +173,64 @@ function buildHolidayCards(){
     `<div style="padding:.9rem;background:var(--surface2);border-radius:var(--radius);border-left:3px solid ${h.color}"><div style="font-size:10px;color:var(--muted);margin-bottom:3px">${h.month}</div><div style="font-size:12px;font-weight:500;color:var(--white);margin-bottom:3px">${h.name}</div><div style="font-size:11px;color:var(--muted2)">${h.desc}</div></div>`
   ).join('');
 }
+
+async function buildHistoryPage(){
+  const historyList = document.getElementById('historyList');
+  historyList.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;">Loading...</div>';
+
+  const user = auth.currentUser;
+  if(!user){
+    historyList.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;">Please log in to view history.</div>';
+    return;
+  }
+
+  const entries = await loadHistory(user.uid);
+
+  if(entries.length === 0){
+    historyList.innerHTML = `
+      <div style="text-align:center;padding:3rem;color:var(--muted);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.4;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div style="font-size:13px;">No saved history yet. Enter the dashboard to save your first entry.</div>
+      </div>`;
+    return;
+  }
+
+  historyList.innerHTML = entries.map(e => {
+    const net = e.netProfit || 0;
+    const date = e.savedAt ? new Date(e.savedAt.seconds * 1000).toLocaleString('en-MY', {
+      day:'numeric', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    }) : '—';
+    const netColor = net >= 0 ? 'var(--gold)' : 'var(--crimson)';
+    const netText = net >= 0 ? `+ RM ${Math.round(net).toLocaleString()}` : `− RM ${Math.round(Math.abs(net)).toLocaleString()}`;
+
+    return `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:4px;">${date}</div>
+          <div style="font-size:11px;color:var(--muted2);margin-bottom:4px;">
+            ${e.dramas} drama(s) · RM ${e.price}/ep · ${e.paidEps} paid eps · Fixed cost RM ${Math.round(e.fixedCost || 0).toLocaleString()}
+          </div>
+          <div style="font-size:12px;font-weight:600;color:${netColor};">Net profit: ${netText}</div>
+        </div>
+        <button class="icon-btn" onclick="restoreHistory('${e.id}', ${JSON.stringify(e).replace(/'/g, "\\'")})" style="flex-shrink:0;white-space:nowrap;">
+          Restore
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function restoreHistory(id, entry){
+  if(!entry) return;
+  globalDramas = entry.dramas || 1;
+  globalEps = entry.paidEps || 4;
+  scenarios.min = entry.scenarios?.min || scenarios.min;
+  scenarios.decent = entry.scenarios?.decent || scenarios.decent;
+  scenarios.max = entry.scenarios?.max || scenarios.max;
+  cfg = { ...scenarios.decent };
+  buildDashboard();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="overview"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-overview').classList.add('active');
+}

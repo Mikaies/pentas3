@@ -120,6 +120,7 @@ document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById('page-'+el.dataset.page).classList.add('active');
     if(el.dataset.page==='scenarios') buildScenariosPage();
+    if(el.dataset.page==='history') buildHistoryPage();
   });
 });
 

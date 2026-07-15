@@ -70,3 +70,31 @@ async function updateUserPassword(newPassword, currentPassword){
 async function updateUserName(newName){
   await saveUserData(auth.currentUser.uid, { name: newName });
 }
+
+// ── SAVE HISTORY ENTRY ──
+async function saveHistoryEntry(uid, entry){
+  try {
+    const histRef = db.collection('users').doc(uid).collection('history');
+    await histRef.add({
+      ...entry,
+      savedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch(e){
+    console.error('Error saving history:', e);
+  }
+}
+
+// ── LOAD HISTORY ──
+async function loadHistory(uid){
+  try {
+    const snap = await db.collection('users').doc(uid)
+      .collection('history')
+      .orderBy('savedAt', 'desc')
+      .limit(20)
+      .get();
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e){
+    console.error('Error loading history:', e);
+    return [];
+  }
+}

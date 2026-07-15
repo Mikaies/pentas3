@@ -329,8 +329,11 @@
       <div class="nav-item" data-page="payout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Payout Split
       </div>
-      <div class="nav-item" data-page="scenarios">
+       <div class="nav-item" data-page="scenarios">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Scenarios Compare
+      </div>
+      <div class="nav-item" data-page="history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>History
       </div>
       <div class="nav-divider"></div>
       <div class="nav-label">Your configuration</div>
@@ -497,6 +500,20 @@
         </div>
       </div>
 
+<!-- HISTORY -->
+      <div class="page" id="page-history">
+        <div class="page-header">
+          <div class="page-title">Saved History</div>
+          <div class="page-sub">Your past dashboard configurations — click Restore to reload any entry</div>
+        </div>
+        <div id="historyList">
+          <div style="text-align:center;padding:3rem;color:var(--muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.4;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div style="font-size:13px;">No saved history yet. Enter the dashboard to save your first entry.</div>
+          </div>
+        </div>
+      </div>
+      
       <div class="print-footer">Pentas3 Financial Dashboard Report</div>
 
     </main>
