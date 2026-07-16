@@ -89,10 +89,15 @@ async function loadHistory(uid){
   try {
     const snap = await db.collection('users').doc(uid)
       .collection('history')
-      .orderBy('savedAt', 'desc')
-      .limit(20)
       .get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Sort by savedAt descending on client side
+    entries.sort((a, b) => {
+      const aTime = a.savedAt ? a.savedAt.seconds : 0;
+      const bTime = b.savedAt ? b.savedAt.seconds : 0;
+      return bTime - aTime;
+    });
+    return entries.slice(0, 20);
   } catch(e){
     console.error('Error loading history:', e);
     return [];
