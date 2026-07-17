@@ -125,14 +125,14 @@ function renderOverviewMetrics(){
    OVERVIEW TABLE
 ═══════════════════════════════════════════ */
 function renderTable(){
-  const data=calcMonthData();
+  const data=calcMonthData().slice(0,6);
   const mf=monthlyFixed();
   const rows=data.map((d,i)=>{
     const net=d.gp-mf;
-    return `<tr onclick="showDetail(${i})"><td style="font-weight:500;white-space:nowrap">Month ${i+1}</td><td><span class="badge ${phaseStyle(PHASES[i])}">${PHASES[i]}</span></td><td>${d.users.toLocaleString()}</td><td>${d.paying.toLocaleString()}</td><td>${fmt(d.rev)}</td><td style="color:var(--muted2)">${fmt(d.dc)}</td><td style="color:var(--gold)">${fmt(d.gp)}</td><td class="${net>=0?'pos-val':'neg-val'}">${fmtNet(net)}</td></tr>`;
+    return `<tr onclick="showDetail(${i})"><td style="font-weight:500;white-space:nowrap">Month ${i+1}</td><td><span class="badge ${phaseStyle(PHASES[i])}">${PHASES[i]}</span></td><td>${d.paying.toLocaleString()}</td><td>${fmt(d.rev)}</td><td style="color:var(--muted2)">${fmt(d.dc)}</td><td style="color:var(--gold)">${fmt(d.gp)}</td><td class="${net>=0?'pos-val':'neg-val'}">${fmtNet(net)}</td></tr>`;
   });
-  const tU=data.reduce((a,d)=>a+d.users,0),tP=data.reduce((a,d)=>a+d.paying,0),tR=data.reduce((a,d)=>a+d.rev,0),tD=data.reduce((a,d)=>a+d.dc,0),tG=data.reduce((a,d)=>a+d.gp,0),tn=netProfit();
-  rows.push(`<tr style="background:var(--surface2)"><td style="font-weight:700">TOTAL</td><td>—</td><td>${tU.toLocaleString()}</td><td>${tP.toLocaleString()}</td><td>${fmt(tR)}</td><td style="color:var(--muted2)">${fmt(tD)}</td><td style="color:var(--gold)">${fmt(tG)}</td><td class="${tn>=0?'pos-val':'neg-val'}">${fmtNet(tn)}</td></tr>`);
+  const tP=data.reduce((a,d)=>a+d.paying,0),tR=data.reduce((a,d)=>a+d.rev,0),tD=data.reduce((a,d)=>a+d.dc,0),tG=data.reduce((a,d)=>a+d.gp,0),tn=data.reduce((a,d)=>a+(d.gp-mf),0);
+  rows.push(`<tr style="background:var(--surface2)"><td style="font-weight:700">TOTAL</td><td>—</td><td>${tP.toLocaleString()}</td><td>${fmt(tR)}</td><td style="color:var(--muted2)">${fmt(tD)}</td><td style="color:var(--gold)">${fmt(tG)}</td><td class="${tn>=0?'pos-val':'neg-val'}">${fmtNet(tn)}</td></tr>`);
   document.getElementById('tableBody').innerHTML=rows.join('');
 }
 

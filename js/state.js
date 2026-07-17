@@ -25,14 +25,15 @@ let payoutChartInst = null;
 let scCompareChartInst = null;
 let scBarChartInst = null;
 let isLight = false;
+let producerSplit = 0.80;
 
 // Per-scenario drama counters
 let dramaCounts = { min:3, decent:5, max:8 };
 let activeScenarioTab = 'min';
 
-const BASE_USERS = [80000,100000,60000,8000,5000,3000,800,800,800,800,800,800];
+const BASE_USERS = [100000,80000,60000,20000,10000,5000,2000,2000,2000,2000,2000,2000];
 const PAYING_RATE = 0.10;
-const PHASES = ['Launch Peak','Heavy Momentum','Holiday Peak','Post-Peak Drop','Settling Down','Low Baseline','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail'];
+const PHASES = ['Launch Peak','Growth','Early Momentum','Post-Peak Drop','Settling Down','Low Baseline','Steady State','Steady State','Steady State','Steady State','Steady State','Steady State'];
 const HOLIDAYS = ['','','','','','','','','','','',''];
 const HOLIDAY_INFO = [];
 

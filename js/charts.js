@@ -142,23 +142,37 @@ function buildCostChart(){
 ═══════════════════════════════════════════ */
 function renderPayoutAmounts(){
   const net=netProfit();
+  const directorSplit = 1 - producerSplit;
   if(net>=0){
-    document.getElementById('po-producer').textContent=fmt(net*0.80);
-    document.getElementById('po-director').textContent=fmt(net*0.20);
+    document.getElementById('po-producer').textContent=fmt(net*producerSplit);
+    document.getElementById('po-director').textContent=fmt(net*directorSplit);
   } else {
     ['po-producer','po-director'].forEach(id=>document.getElementById(id).textContent='—');
   }
+}
+
+function updatePayoutSplit(val){
+  producerSplit = parseInt(val) / 100;
+  const directorSplit = Math.round((1 - producerSplit) * 100);
+  document.getElementById('producer-pct-label').textContent = val + '%';
+  document.getElementById('po-producer-pct').textContent = val + '%';
+  document.getElementById('po-director-pct').textContent = directorSplit + '%';
+  renderPayoutAmounts();
+  buildPayoutChart();
+  buildPayoutTable();
 }
 
 function buildPayoutChart(){
   if(payoutChartInst){ payoutChartInst.destroy(); payoutChartInst=null; }
   const ctx=document.getElementById('payoutChart').getContext('2d');
   const net=Math.max(0,netProfit());
+  const directorSplit = Math.round((1-producerSplit)*100);
+  const producerPct = Math.round(producerSplit*100);
   payoutChartInst = new Chart(ctx,{
     type:'doughnut',
     data:{
-      labels:['Producer (80%)','Director (20%)'],
-      datasets:[{data:[net*0.80,net*0.20],backgroundColor:['rgba(212,175,55,0.85)','rgba(245,245,245,0.5)'],borderWidth:0}]
+      labels:[`Producer (${producerPct}%)`,`Director (${directorSplit}%)`],
+      datasets:[{data:[net*producerSplit,net*(1-producerSplit)],backgroundColor:['rgba(212,175,55,0.85)','rgba(245,245,245,0.5)'],borderWidth:0}]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#aaa',font:{size:11}}},tooltip:{callbacks:{label:(c)=>c.label+': RM '+Math.round(c.parsed).toLocaleString()}}}}
   });
@@ -170,15 +184,18 @@ function buildPayoutTable(){
   const insight=document.getElementById('producerInsight');
   if(net>=0){
     const perDrama=net/cfg.dramas;
+const producerPct = Math.round(producerSplit*100);
+    const directorSplit = 1 - producerSplit;
+    const directorPct = Math.round(directorSplit*100);
     insight.innerHTML=`<div style="font-size:12px;color:var(--muted2);line-height:1.7;">
       With <strong style="color:var(--gold)">${fmt(net)}</strong> net profit across <strong style="color:var(--gold)">${cfg.dramas} drama(s)</strong>:<br>
-      Producer earns <strong style="color:var(--gold)">${fmt(net*0.80)}</strong> total (${fmt(perDrama*0.80)} per drama) ·
-      Director earns <strong style="color:var(--white)">${fmt(net*0.20)}</strong> total.<br>
+      Producer earns <strong style="color:var(--gold)">${fmt(net*producerSplit)}</strong> total (${fmt((net/cfg.dramas)*producerSplit)} per drama) ·
+      Director earns <strong style="color:var(--white)">${fmt(net*directorSplit)}</strong> total.<br>
       <span style="color:var(--muted);font-size:11px;">Note: Pentas3 only deducts transaction costs (Android/Apple store fees) — not taken from net profit.</span>
     </div>`;
     document.getElementById('payoutDetailBody').innerHTML=`
-      <tr><td>Producer</td><td>80%</td><td class="pos-val">${fmt(net*0.80)}</td><td>${fmt(net*0.80/cfg.dramas)}</td></tr>
-      <tr><td>Director</td><td>20%</td><td>${fmt(net*0.20)}</td><td>${fmt(net*0.20/cfg.dramas)}</td></tr>
+      <tr><td>Producer</td><td>${producerPct}%</td><td class="pos-val">${fmt(net*producerSplit)}</td><td>${fmt((net/cfg.dramas)*producerSplit)}</td></tr>
+      <tr><td>Director</td><td>${directorPct}%</td><td>${fmt(net*directorSplit)}</td><td>${fmt((net/cfg.dramas)*directorSplit)}</td></tr>
       <tr><td colspan="4" style="font-size:11px;color:var(--muted);padding-top:10px;">&#8505; Pentas3 takes transaction costs only (app store/gateway fees) — deducted before gross profit, not from net profit split.</td></tr>`;
   } else {
     insight.innerHTML=`<div style="font-size:12px;color:var(--muted2);line-height:1.7;">

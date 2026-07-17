@@ -398,7 +398,7 @@
         <div class="card">
           <div class="card-header"><div class="card-title">Monthly breakdown table</div><div class="card-sub" style="font-size:11px;color:var(--muted)">Click any row for details</div></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Month</th><th>Phase</th><th>Total users</th><th>Paying users</th><th>Revenue</th><th>Direct cost</th><th>Gross profit</th><th>Net profit</th>
+            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Direct cost</th><th>Gross profit</th><th>Net profit</th>
           </tr></thead><tbody id="tableBody"></tbody></table></div>
         </div>
       </div>
@@ -442,15 +442,35 @@
         </div>
       </div>
 
-      <!-- PAYOUT -->
+ <!-- PAYOUT -->
       <div class="page" id="page-payout">
         <div class="page-header">
           <div class="page-title">Payout Split</div>
           <div class="page-sub">Revenue distribution — Producer · Director · Pentas3</div>
         </div>
+
+        <!-- ADJUSTABLE SPLIT -->
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div class="card-header"><div class="card-title">Adjust payout split</div></div>
+          <div style="padding:.5rem 0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:12px;color:var(--muted2);">Producer share</span>
+              <span style="font-size:14px;font-weight:700;color:var(--gold);" id="producer-pct-label">80%</span>
+            </div>
+            <input type="range" id="producer-split-slider" min="50" max="95" value="80" step="5"
+              style="width:100%;accent-color:var(--gold);"
+              oninput="updatePayoutSplit(this.value)"/>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;">
+              <span style="font-size:10px;color:var(--muted);">50%</span>
+              <span style="font-size:10px;color:var(--muted);">95%</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;">Director gets the remaining share. Pentas3 takes transaction costs only.</div>
+          </div>
+        </div>
+
         <div class="payout-grid">
-          <div class="payout-card" style="border-color:rgba(212,175,55,.4)"><div class="payout-role">Producer</div><div class="payout-pct gold">80%</div><div class="payout-desc">Primary content creator share</div><div class="payout-amt" id="po-producer">—</div></div>
-          <div class="payout-card" style="border-color:rgba(245,245,245,.3)"><div class="payout-role">Director</div><div class="payout-pct" style="color:var(--white)">20%</div><div class="payout-desc">Creative direction share</div><div class="payout-amt" id="po-director">—</div></div>
+          <div class="payout-card" style="border-color:rgba(212,175,55,.4)"><div class="payout-role">Producer</div><div class="payout-pct gold" id="po-producer-pct">80%</div><div class="payout-desc">Primary content creator share</div><div class="payout-amt" id="po-producer">—</div></div>
+          <div class="payout-card" style="border-color:rgba(245,245,245,.3)"><div class="payout-role">Director</div><div class="payout-pct" style="color:var(--white)" id="po-director-pct">20%</div><div class="payout-desc">Creative direction share</div><div class="payout-amt" id="po-director">—</div></div>
           <div class="payout-card" style="border-color:rgba(190,30,45,.4);opacity:.5"><div class="payout-role">Pentas3</div><div class="payout-pct red" style="font-size:16px;padding-top:8px;">Transaction cost only</div><div class="payout-desc">App store / gateway fees (not from net profit)</div><div class="payout-amt" id="po-pentas" style="font-size:11px;color:var(--muted)">Android/Apple cut</div></div>
         </div>
         <div class="card">
