@@ -30,18 +30,11 @@ let isLight = false;
 let dramaCounts = { min:3, decent:5, max:8 };
 let activeScenarioTab = 'min';
 
-const BASE_USERS = [50000,100000,75000,20000,10000,5000,1500,8000,6500,1500,12000,25000];
+const BASE_USERS = [80000,100000,60000,8000,5000,3000,800,800,800,800,800,800];
 const PAYING_RATE = 0.10;
-const PHASES = ['Launch Peak','Heavy Momentum','Holiday Peak','Post-Peak Drop','Normal Month','Mid-Year Surge','Quiet Baseline','Merdeka Upswing','Malaysia Day Break','Pre-Festive Drop','Deepavali Surge','Year-End Peak'];
-const HOLIDAYS = ['','','','','','','Post-Raya Haji','Merdeka Day','Malaysia Day','Calm period','Deepavali','Christmas / Year-End'];
-const HOLIDAY_INFO = [
-  {month:'Month 7 · July',  name:'Post-Raya Haji quiet',   desc:'Hari Raya Haji aftermath. Minor Sarawak Day lift.',          color:'var(--border2)'},
-  {month:'Month 8 · August',name:'Merdeka upswing',         desc:'Maulidur Rasul + Merdeka Day long weekend surge.',           color:'var(--crimson)'},
-  {month:'Month 9 · Sept',  name:'Malaysia Day break',      desc:'Malaysia Day + mid-term school holidays.',                   color:'var(--crimson)'},
-  {month:'Month 10 · Oct',  name:'Pre-festive calm',        desc:'Quiet baseline before the year-end push.',                   color:'var(--border2)'},
-  {month:'Month 11 · Nov',  name:'Deepavali surge',         desc:'Deepavali + start of year-end school holidays.',             color:'var(--gold)'},
-  {month:'Month 12 · Dec',  name:'Year-end grand peak',     desc:'Christmas · school holidays · monsoon season indoors.',      color:'var(--gold)'},
-];
+const PHASES = ['Launch Peak','Heavy Momentum','Holiday Peak','Post-Peak Drop','Settling Down','Low Baseline','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail','Quiet Tail'];
+const HOLIDAYS = ['','','','','','','','','','','',''];
+const HOLIDAY_INFO = [];
 
 /* ═══════════════════════════════════════════
    HELPERS
