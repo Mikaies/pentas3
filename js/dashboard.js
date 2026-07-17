@@ -195,6 +195,15 @@ async function buildHistoryPage(){
     return;
   }
 
+  // Sort: pinned first, then by date
+  entries.sort((a, b) => {
+    if(a.pinned && !b.pinned) return -1;
+    if(!a.pinned && b.pinned) return 1;
+    const aTime = a.savedAt ? a.savedAt.seconds : 0;
+    const bTime = b.savedAt ? b.savedAt.seconds : 0;
+    return bTime - aTime;
+  });
+
   historyList.innerHTML = entries.map(e => {
     const net = e.netProfit || 0;
     const date = e.savedAt ? new Date(e.savedAt.seconds * 1000).toLocaleString('en-MY', {
@@ -203,30 +212,94 @@ async function buildHistoryPage(){
     }) : '—';
     const netColor = net >= 0 ? 'var(--gold)' : 'var(--crimson)';
     const netText = net >= 0 ? `+ RM ${Math.round(net).toLocaleString()}` : `− RM ${Math.round(Math.abs(net)).toLocaleString()}`;
+    const label = e.label || '';
+    const pinIcon = e.pinned ? '📌 ' : '';
+    const entryDataStr = JSON.stringify(e).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
     return `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:4px;">${date}</div>
+      <div class="history-card" data-id="${e.id}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;">
+        <div style="flex:1;min-width:0;">
+          ${label ? `<div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">${pinIcon}${label}</div>` : ''}
+          <div style="font-size:${label ? '11px' : '13px'};font-weight:${label ? '400' : '600'};color:${label ? 'var(--muted)' : 'var(--white)'};margin-bottom:4px;">${pinIcon}${date}</div>
           <div style="font-size:11px;color:var(--muted2);margin-bottom:4px;">
             ${e.dramas} drama(s) · RM ${e.price}/ep · ${e.paidEps} paid eps · Fixed cost RM ${Math.round(e.fixedCost || 0).toLocaleString()}
           </div>
           <div style="font-size:12px;font-weight:600;color:${netColor};">Net profit: ${netText}</div>
         </div>
-        <button class="icon-btn" onclick="restoreHistory('${e.id}', ${JSON.stringify(e).replace(/'/g, "\\'")})" style="flex-shrink:0;white-space:nowrap;">
-          Restore
-        </button>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <button class="icon-btn" onclick="restoreHistory('${e.id}', '${entryDataStr}')" style="white-space:nowrap;">Restore</button>
+          <div class="hist-menu-wrap" style="position:relative;">
+            <button class="icon-btn hist-dots-btn" onclick="toggleHistMenu('${e.id}')" style="padding:6px 10px;font-size:16px;letter-spacing:2px;">···</button>
+            <div id="hist-menu-${e.id}" style="display:none;position:absolute;right:0;top:36px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);min-width:140px;z-index:100;overflow:hidden;">
+              <button onclick="histRename('${e.id}')" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--white);font-size:12px;text-align:left;cursor:pointer;">✏️ Rename</button>
+              <button onclick="histPin('${e.id}', ${!e.pinned})" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--white);font-size:12px;text-align:left;cursor:pointer;">${e.pinned ? '📌 Unpin' : '📌 Pin to top'}</button>
+              <button onclick="histDelete('${e.id}')" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--crimson);font-size:12px;text-align:left;cursor:pointer;">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
       </div>`;
   }).join('');
+
+  // Close menus when clicking outside
+  document.addEventListener('click', (e)=>{
+    if(!e.target.closest('.hist-menu-wrap')){
+      document.querySelectorAll('[id^="hist-menu-"]').forEach(m => m.style.display = 'none');
+    }
+  }, { once: true });
 }
 
-function restoreHistory(id, entry){
+function toggleHistMenu(id){
+  const menu = document.getElementById('hist-menu-'+id);
+  const allMenus = document.querySelectorAll('[id^="hist-menu-"]');
+  allMenus.forEach(m => { if(m.id !== 'hist-menu-'+id) m.style.display = 'none'; });
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  // Re-add outside click listener
+  setTimeout(()=>{
+    document.addEventListener('click', (e)=>{
+      if(!e.target.closest('.hist-menu-wrap')){
+        document.querySelectorAll('[id^="hist-menu-"]').forEach(m => m.style.display = 'none');
+      }
+    }, { once: true });
+  }, 10);
+}
+
+async function histDelete(id){
+  if(!confirm('Delete this history entry?')) return;
+  const user = auth.currentUser;
+  if(!user) return;
+  await deleteHistoryEntry(user.uid, id);
+  buildHistoryPage();
+}
+
+async function histPin(id, pinned){
+  const user = auth.currentUser;
+  if(!user) return;
+  await pinHistoryEntry(user.uid, id, pinned);
+  buildHistoryPage();
+}
+
+async function histRename(id){
+  const newName = prompt('Enter a name for this entry:');
+  if(newName === null) return;
+  const user = auth.currentUser;
+  if(!user) return;
+  await renameHistoryEntry(user.uid, id, newName.trim());
+  buildHistoryPage();
+}
+
+function restoreHistory(id, entryStr){
+  let entry;
+  try {
+    entry = typeof entryStr === 'string' ? JSON.parse(entryStr.replace(/&quot;/g, '"')) : entryStr;
+  } catch(e){ console.error('restore parse error', e); return; }
   if(!entry) return;
   globalDramas = entry.dramas || 1;
   globalEps = entry.paidEps || 4;
-  scenarios.min = entry.scenarios?.min || scenarios.min;
-  scenarios.decent = entry.scenarios?.decent || scenarios.decent;
-  scenarios.max = entry.scenarios?.max || scenarios.max;
+  if(entry.scenarios){
+    scenarios.min = entry.scenarios.min || scenarios.min;
+    scenarios.decent = entry.scenarios.decent || scenarios.decent;
+    scenarios.max = entry.scenarios.max || scenarios.max;
+  }
   cfg = { ...scenarios.decent };
   buildDashboard();
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));

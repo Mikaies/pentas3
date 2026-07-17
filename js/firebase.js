@@ -103,3 +103,30 @@ async function loadHistory(uid){
     return [];
   }
 }
+
+// ── DELETE HISTORY ENTRY ──
+async function deleteHistoryEntry(uid, historyId){
+  try {
+    await db.collection('users').doc(uid).collection('history').doc(historyId).delete();
+  } catch(e){
+    console.error('Error deleting history:', e);
+  }
+}
+
+// ── RENAME HISTORY ENTRY ──
+async function renameHistoryEntry(uid, historyId, newName){
+  try {
+    await db.collection('users').doc(uid).collection('history').doc(historyId).update({ label: newName });
+  } catch(e){
+    console.error('Error renaming history:', e);
+  }
+}
+
+// ── PIN/UNPIN HISTORY ENTRY ──
+async function pinHistoryEntry(uid, historyId, pinned){
+  try {
+    await db.collection('users').doc(uid).collection('history').doc(historyId).update({ pinned });
+  } catch(e){
+    console.error('Error pinning history:', e);
+  }
+}
