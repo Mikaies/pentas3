@@ -108,16 +108,11 @@
 
     <div class="calc-divider"></div>
 
-    <div class="calc-section-title">&#127916; Number of Paid Episodes <span class="free-tag">+ 3 free</span></div>
-    <div class="form-group">
-      <div class="spin-group">
-        <button class="spin-btn" onclick="spinGlobalEps(-1)" type="button">&#8722;</button>
-        <input class="spin-input" id="global-eps" type="number" min="1" max="17" value="4"/>
-        <button class="spin-btn" onclick="spinGlobalEps(1)" type="button">+</button>
-      </div>
-      <div class="episodes-visual" id="ep-visual-global"></div>
-      <div class="input-hint" id="ep-total-hint">Total: 7 of 20 episodes per drama</div>
-    </div>
+   <div class="calc-section-title">&#127916; Episode Structure</div>
+  <div class="form-group">
+    <div class="episodes-visual" id="ep-visual-global"></div>
+    <div class="input-hint" id="ep-total-hint">3 free · 14 paid episodes (ep 4–17)</div>
+  </div>
 
     <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
@@ -147,16 +142,35 @@
       </div>
       <div class="calc-section-title">&#128176; Pricing</div>
       <div class="form-group">
-        <label class="form-label">Price per episode (RM)</label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinPrice('min',-0.10)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-price-min" type="number" step="0.01" min="0.01" value="0.30"/>
-          <button class="spin-btn" onclick="spinPrice('min',0.10)" type="button">+</button>
-        </div>
-        <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
-      </div>
-      <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+  <label class="form-label">Price per episode (RM)</label>
+  <div class="spin-group">
+    <button class="spin-btn" onclick="spinPrice('min',-0.10)" type="button">&#8722;</button>
+    <input class="spin-input" id="inp-price-min" type="number" step="0.01" min="0.01" value="0.30"/>
+    <button class="spin-btn" onclick="spinPrice('min',0.10)" type="button">+</button>
+  </div>
+  <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
+</div>
+<div class="form-group">
+  <label class="form-label">Expected monthly viewers (peak)</label>
+  <input class="form-input" id="inp-viewers-min" type="number" min="0" value="20000"/>
+  <div class="input-hint">How many people you expect to reach at launch</div>
+</div>
+<div class="form-group">
+  <label class="form-label">Conversion rate: <span id="conv-label-min">2%</span></label>
+  <input type="range" id="inp-conversion-min" min="1" max="10" step="0.5" value="2"
+    oninput="document.getElementById('conv-label-min').textContent=this.value+'%'"
+    style="width:100%;accent-color:var(--gold);"/>
+  <div class="input-hint">% of viewers who pay to unlock episode 4+</div>
+</div>
+<div class="form-group">
+  <label class="form-label">Platform fee: <span id="fee-label-min">20%</span></label>
+  <input type="range" id="inp-platformfee-min" min="10" max="30" step="1" value="20"
+    oninput="document.getElementById('fee-label-min').textContent=this.value+'%'"
+    style="width:100%;accent-color:var(--crimson);"/>
+  <div class="input-hint">App store / payment gateway cut</div>
+</div>
+<div class="calc-divider"></div>
+<div class="calc-section-title">&#128202; Cost structure (RM)</div>
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-min" type="number" min="0" value="8000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-min" type="number" min="0" value="15000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
@@ -412,7 +426,7 @@
         <div class="card">
           <div class="card-header"><div class="card-title">Full projection table</div></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Month</th><th>Phase & holiday</th><th>Total users</th><th>Paying users</th><th>Revenue</th><th>Direct cost (40%)</th><th>Gross profit (60%)</th><th>Monthly fixed</th><th>Net profit</th>
+            <th>Month</th><th>Phase & holiday</th><th>Viewers</th><th>Paying users</th><th>Revenue</th><th>Platform fee</th><th>Net revenue</th><th>Monthly fixed</th><th>Net profit</th>
           </tr></thead><tbody id="projTableBody"></tbody></table></div>
         </div>
         <div class="card">

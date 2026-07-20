@@ -112,13 +112,13 @@ function renderOverviewMetrics(){
   const tDC=data.reduce((a,d)=>a+d.dc,0);
   const tU=data.reduce((a,d)=>a+d.users,0);
   const net=netProfit();
-  document.getElementById('overviewMetrics').innerHTML=`
-    <div class="metric-card"><div class="metric-label">Total users (12mo)</div><div class="metric-val">${tU.toLocaleString()}</div><div class="metric-note">×${cfg.dramas} drama(s) · 10% conversion</div></div>
-    <div class="metric-card"><div class="metric-label">Total revenue</div><div class="metric-val">${fmt(tRev)}</div><div class="metric-note">RM ${cfg.price.toFixed(2)} × ${cfg.paidEps} paid eps</div></div>
-    <div class="metric-card"><div class="metric-label">Direct cost (40%)</div><div class="metric-val">${fmt(tDC)}</div><div class="metric-note">Platform & operations</div></div>
-    <div class="metric-card gold-accent"><div class="metric-label">Gross profit (60%)</div><div class="metric-val">${fmt(tGP)}</div><div class="metric-note">Before fixed costs</div></div>
-    <div class="metric-card"><div class="metric-label">Total fixed cost</div><div class="metric-val">${fmt(totalFixed())}</div><div class="metric-note">Production + Management + Marketing</div></div>
-    <div class="metric-card ${net>=0?'gold-accent':'red-accent'}"><div class="metric-label">Net profit</div><div class="metric-val ${net>=0?'pos':'neg'}">${fmtNet(net)}</div><div class="metric-note">All dramas · 12 months</div></div>`;
+document.getElementById('overviewMetrics').innerHTML=`
+  <div class="metric-card"><div class="metric-label">Total viewers (12mo)</div><div class="metric-val">${tU.toLocaleString()}</div><div class="metric-note">${(cfg.conversionRate*100).toFixed(1)}% conversion rate</div></div>
+  <div class="metric-card"><div class="metric-label">Total revenue</div><div class="metric-val">${fmt(tRev)}</div><div class="metric-note">RM ${cfg.price.toFixed(2)} × ${PAID_EPISODES} paid eps</div></div>
+  <div class="metric-card"><div class="metric-label">Platform fee (${(cfg.platformFee*100).toFixed(0)}%)</div><div class="metric-val">${fmt(tDC)}</div><div class="metric-note">App store / gateway cut</div></div>
+  <div class="metric-card gold-accent"><div class="metric-label">Net revenue</div><div class="metric-val">${fmt(tGP)}</div><div class="metric-note">Before fixed costs</div></div>
+  <div class="metric-card"><div class="metric-label">Total fixed cost</div><div class="metric-val">${fmt(totalFixed())}</div><div class="metric-note">Production + Management + Marketing</div></div>
+  <div class="metric-card ${net>=0?'gold-accent':'red-accent'}"><div class="metric-label">Net profit</div><div class="metric-val ${net>=0?'pos':'neg'}">${fmtNet(net)}</div><div class="metric-note">12 months</div></div>`;
 }
 
 /* ═══════════════════════════════════════════

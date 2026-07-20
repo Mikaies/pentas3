@@ -1,28 +1,20 @@
 /* GLOBAL DRAMA & EPISODE SETUP */
 let globalDramas = 1;
-let globalEps = 4;
 
 function spinGlobalDrama(delta){
   globalDramas = Math.max(1, globalDramas + delta);
   document.getElementById('global-drama-count').textContent = globalDramas;
 }
 
-function spinGlobalEps(delta){
-  globalEps = Math.min(17, Math.max(1, globalEps + delta));
-  document.getElementById('global-eps').value = globalEps;
-  updateGlobalEpisodeVisual();
-}
-
 function updateGlobalEpisodeVisual(){
-  const paid = globalEps;
   let dots = '';
-  for(let i = 1; i <= paid + 3; i++){
+  for(let i = 1; i <= TOTAL_EPISODES; i++){
     let cls = 'ep-dot';
-    if(i <= 3) cls += ' free'; else cls += ' paid';
+    if(i <= FREE_EPISODES) cls += ' free'; else cls += ' paid';
     dots += `<div class="${cls}" title="Ep ${i}">${i}</div>`;
   }
   document.getElementById('ep-visual-global').innerHTML = dots;
-  document.getElementById('ep-total-hint').textContent = `Total: ${paid + 3} of 20 episodes per drama`;
+  document.getElementById('ep-total-hint').textContent = `${FREE_EPISODES} free · ${PAID_EPISODES} paid episodes (ep ${FREE_EPISODES+1}–${TOTAL_EPISODES})`;
 }
 
 document.getElementById('btn-setup-next').addEventListener('click', ()=>{
@@ -57,12 +49,14 @@ function updateTotalCostFor(sc){
 ═══════════════════════════════════════════ */
 function readScenario(sc){
   return {
-    price:      parseFloat(document.getElementById('inp-price-'+sc).value)||0.30,
-    paidEps:    globalEps,
-    dramas:     globalDramas,
-    production: parseFloat(document.getElementById('inp-production-'+sc).value)||0,
-    management: parseFloat(document.getElementById('inp-management-'+sc).value)||0,
-    marketing:  parseFloat(document.getElementById('inp-marketing-'+sc).value)||0,
+    price:          parseFloat(document.getElementById('inp-price-'+sc).value)||0.30,
+    viewers:        parseFloat(document.getElementById('inp-viewers-'+sc).value)||0,
+    conversionRate: (parseFloat(document.getElementById('inp-conversion-'+sc).value)||2)/100,
+    platformFee:    (parseFloat(document.getElementById('inp-platformfee-'+sc).value)||20)/100,
+    dramas:         globalDramas,
+    production:     parseFloat(document.getElementById('inp-production-'+sc).value)||0,
+    management:     parseFloat(document.getElementById('inp-management-'+sc).value)||0,
+    marketing:      parseFloat(document.getElementById('inp-marketing-'+sc).value)||0,
   };
 }
 
@@ -77,7 +71,7 @@ document.getElementById('btn-calculate').addEventListener('click',()=>{
     const s = scenarios[sc];
     const net = netProfitFor(s);
     document.getElementById('ssum-price-'+sc).textContent   = 'RM '+s.price.toFixed(2)+'/ep';
-    document.getElementById('ssum-eps-'+sc).textContent     = s.paidEps+' eps';
+    document.getElementById('ssum-eps-'+sc).textContent     = PAID_EPISODES+' eps';
     document.getElementById('ssum-dramas-'+sc).textContent  = s.dramas+' drama'+(s.dramas>1?'s':'');
     document.getElementById('ssum-fixed-'+sc).textContent   = fmt(totalFixedFor(s));
     const netEl = document.getElementById('ssum-net-'+sc);
