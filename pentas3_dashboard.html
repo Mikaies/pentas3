@@ -90,31 +90,71 @@
     </div>
     <div class="calc-header">
       <div class="calc-step">Step 1 of 3 — Basic Setup</div>
-      <div class="calc-title">Dramas & Episodes</div>
-      <div class="calc-sub">Set your drama count and episode structure before configuring budgets</div>
+      <div class="calc-title">Audience & Pricing</div>
+      <div class="calc-sub">Set your expected audience size and episode pricing before configuring budgets</div>
     </div>
 
-    <div class="calc-section-title">&#127916; Number of Dramas</div>
+    <div class="calc-section-title">&#128101; Expected Total Viewers</div>
     <div class="form-group">
-      <div class="drama-counter">
-        <button class="counter-btn" onclick="spinGlobalDrama(-1)" type="button">&#8722;</button>
-        <div>
-          <div class="counter-val" id="global-drama-count">1</div>
-          <div class="counter-label">drama(s)</div>
-        </div>
-        <button class="counter-btn" onclick="spinGlobalDrama(1)" type="button">+</button>
+      <input class="form-input" id="global-viewers" type="number" min="1000" step="1000" value="150000" oninput="updateSetupPreview()"/>
+      <div class="input-hint">How many people do you expect to discover and watch your drama?</div>
+    </div>
+
+    <div class="calc-divider"></div>
+
+    <div class="calc-section-title">&#128200; Conversion Rate <span class="free-tag">% who pay</span></div>
+    <div class="form-group">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;color:var(--muted2);">Conversion rate</span>
+        <span style="font-size:14px;font-weight:700;color:var(--gold);" id="conversion-label">3%</span>
+      </div>
+      <input type="range" id="global-conversion" min="1" max="10" value="3" step="1"
+        style="width:100%;accent-color:var(--gold);"
+        oninput="updateSetupPreview()"/>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:10px;color:var(--muted);">1% (conservative)</span>
+        <span style="font-size:10px;color:var(--muted);">10% (optimistic)</span>
+      </div>
+      <div class="input-hint">Industry average for micro-drama platforms is 2–5%</div>
+    </div>
+
+    <div class="calc-divider"></div>
+
+    <div class="calc-section-title">&#127916; Episode Structure <span class="free-tag">3 free + paid</span></div>
+    <div class="form-group">
+      <label class="form-label">Number of paid episodes</label>
+      <div class="spin-group">
+        <button class="spin-btn" onclick="spinGlobalEps(-1)" type="button">&#8722;</button>
+        <input class="spin-input" id="global-eps" type="number" min="1" max="17" value="17"/>
+        <button class="spin-btn" onclick="spinGlobalEps(1)" type="button">+</button>
+      </div>
+      <div class="input-hint">First 3 episodes always free. Users pay to unlock from episode 4 onwards.</div>
+    </div>
+
+    <div class="calc-divider"></div>
+
+    <div class="calc-section-title">&#128176; Platform Fee <span class="free-tag">app store cut</span></div>
+    <div class="form-group">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;color:var(--muted2);">Platform/app store fee</span>
+        <span style="font-size:14px;font-weight:700;color:var(--crimson);" id="platform-fee-label">20%</span>
+      </div>
+      <input type="range" id="global-platform-fee" min="15" max="30" value="20" step="5"
+        style="width:100%;accent-color:var(--crimson);"
+        oninput="updateSetupPreview()"/>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:10px;color:var(--muted);">15% (small platform)</span>
+        <span style="font-size:10px;color:var(--muted);">30% (Apple/Google)</span>
       </div>
     </div>
 
     <div class="calc-divider"></div>
 
-   <div class="calc-section-title">&#127916; Episode Structure</div>
-  <div class="form-group">
-    <div class="episodes-visual" id="ep-visual-global"></div>
-    <div class="input-hint" id="ep-total-hint">3 free · 14 paid episodes (ep 4–17)</div>
-  </div>
+    <div style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Preview</div>
+      <div id="setup-preview" style="font-size:12px;color:var(--muted2);line-height:1.9;"></div>
+    </div>
 
-    <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
       <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Budget Scenarios &#8594;</button>
     </div>
@@ -185,7 +225,7 @@
         <div class="scenario-badge badge-decent">&#9878;&#65039; Decent Budget</div>
         <div style="font-size:12px;color:var(--muted2);">Balanced investment — solid production, moderate marketing push</div>
       </div>
-      <div class="calc-section-title">&#128176; Pricing</div>
+    <div class="calc-section-title">&#128176; Pricing</div>
       <div class="form-group">
         <label class="form-label">Price per episode (RM)</label>
         <div class="spin-group">
@@ -196,7 +236,7 @@
         <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>  
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-decent" type="number" min="0" value="15000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-decent" type="number" min="0" value="30000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
@@ -211,7 +251,7 @@
         <div class="scenario-badge badge-max">&#128640; Maximum Budget</div>
         <div style="font-size:12px;color:var(--muted2);">Full-scale launch — premium production, aggressive marketing, max dramas</div>
       </div>
-      <div class="calc-section-title">&#128176; Pricing</div>
+    <div class="calc-section-title">&#128176; Pricing</div>
       <div class="form-group">
         <label class="form-label">Price per episode (RM)</label>
         <div class="spin-group">
@@ -222,7 +262,7 @@
         <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>  
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-max" type="number" min="0" value="30000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-max" type="number" min="0" value="50000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
@@ -412,7 +452,7 @@
         <div class="card">
           <div class="card-header"><div class="card-title">Monthly breakdown table</div><div class="card-sub" style="font-size:11px;color:var(--muted)">Click any row for details</div></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Direct cost</th><th>Gross profit</th><th>Net profit</th>
+            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Platform fee</th><th>Net revenue</th><th>Net profit</th>
           </tr></thead><tbody id="tableBody"></tbody></table></div>
         </div>
       </div>
