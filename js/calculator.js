@@ -1,23 +1,45 @@
-/* GLOBAL DRAMA & EPISODE SETUP */
-let globalDramas = 1;
+/* EPISODE STRUCTURE — fixed: 3 free + 14 paid = 17 total */
+const FREE_EPISODES = 3;
+const PAID_EPISODES = 14;
+const TOTAL_EPISODES = 17;
 
-function spinGlobalDrama(delta){
-  globalDramas = Math.max(1, globalDramas + delta);
-  document.getElementById('global-drama-count').textContent = globalDramas;
+/* GLOBAL SETUP VARIABLES */
+let globalViewers = 150000;
+let globalConversion = 0.03;
+let globalEps = 17;
+let globalPlatformFee = 0.20;
+
+function spinGlobalEps(delta){
+  globalEps = Math.min(17, Math.max(1, globalEps + delta));
+  document.getElementById('global-eps').value = globalEps;
+  updateSetupPreview();
 }
 
-function updateGlobalEpisodeVisual(){
-  let dots = '';
-  for(let i = 1; i <= TOTAL_EPISODES; i++){
-    let cls = 'ep-dot';
-    if(i <= FREE_EPISODES) cls += ' free'; else cls += ' paid';
-    dots += `<div class="${cls}" title="Ep ${i}">${i}</div>`;
+function updateSetupPreview(){
+  globalViewers = parseInt(document.getElementById('global-viewers').value) || 150000;
+  const convPct = parseInt(document.getElementById('global-conversion').value) || 3;
+  globalConversion = convPct / 100;
+  globalEps = parseInt(document.getElementById('global-eps').value) || 17;
+  const feePct = parseInt(document.getElementById('global-platform-fee').value) || 20;
+  globalPlatformFee = feePct / 100;
+
+  document.getElementById('conversion-label').textContent = convPct + '%';
+  document.getElementById('platform-fee-label').textContent = feePct + '%';
+
+  const payingUsers = Math.round(globalViewers * globalConversion);
+  const preview = document.getElementById('setup-preview');
+  if(preview){
+    preview.innerHTML = `
+      Expected viewers: <strong style="color:var(--white)">${globalViewers.toLocaleString()}</strong><br>
+      Paying users (${convPct}% conversion): <strong style="color:var(--gold)">${payingUsers.toLocaleString()}</strong><br>
+      Paid episodes: <strong style="color:var(--white)">${globalEps}</strong> (+ 3 free)<br>
+      Platform fee deducted: <strong style="color:var(--crimson)">${feePct}%</strong>
+    `;
   }
-  document.getElementById('ep-visual-global').innerHTML = dots;
-  document.getElementById('ep-total-hint').textContent = `${FREE_EPISODES} free · ${PAID_EPISODES} paid episodes (ep ${FREE_EPISODES+1}–${TOTAL_EPISODES})`;
 }
 
 document.getElementById('btn-setup-next').addEventListener('click', ()=>{
+  updateSetupPreview();
   showScreen('screen-calc');
 });
 
@@ -49,11 +71,11 @@ function updateTotalCostFor(sc){
 ═══════════════════════════════════════════ */
 function readScenario(sc){
   return {
-    price:          parseFloat(document.getElementById('inp-price-'+sc).value)||0.30,
-    viewers:        parseFloat(document.getElementById('inp-viewers-'+sc).value)||0,
-    conversionRate: (parseFloat(document.getElementById('inp-conversion-'+sc).value)||2)/100,
-    platformFee:    (parseFloat(document.getElementById('inp-platformfee-'+sc).value)||20)/100,
-    dramas:         globalDramas,
+    price:          parseFloat(document.getElementById('inp-price-'+sc).value)||0.40,
+    totalViewers:   globalViewers,
+    conversionRate: globalConversion,
+    platformFee:    globalPlatformFee,
+    paidEps:        globalEps,
     production:     parseFloat(document.getElementById('inp-production-'+sc).value)||0,
     management:     parseFloat(document.getElementById('inp-management-'+sc).value)||0,
     marketing:      parseFloat(document.getElementById('inp-marketing-'+sc).value)||0,
@@ -133,7 +155,7 @@ document.querySelectorAll('.ctab[data-chart]').forEach(el=>{
 ['min','decent','max'].forEach(sc=>{
   updateTotalCostFor(sc);
 });
-updateGlobalEpisodeVisual();
+updateSetupPreview();
 
 /* MOBILE MENU TOGGLE */
 document.getElementById('btn-mobile-menu').addEventListener('click', ()=>{
