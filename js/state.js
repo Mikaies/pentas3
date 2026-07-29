@@ -3,37 +3,30 @@
 ═══════════════════════════════════════════ */
 let userName = '';
 
-// Scenarios now focus on viewer reach + pricing, not dramas
 const DEFAULT_SCENARIOS = {
   min: {
     label: 'Minimum',
-    totalViewers: 50000,
-    conversionRate: 0.02,
+    peakUsers: 1000,
     price: 0.30,
     paidEps: 17,
-    platformFee: 0.20,
     production: 8000,
     management: 15000,
     marketing: 5000
   },
   decent: {
     label: 'Decent',
-    totalViewers: 150000,
-    conversionRate: 0.03,
+    peakUsers: 5000,
     price: 0.40,
     paidEps: 17,
-    platformFee: 0.20,
     production: 15000,
     management: 30000,
     marketing: 10000
   },
   max: {
     label: 'Maximum',
-    totalViewers: 500000,
-    conversionRate: 0.05,
+    peakUsers: 15000,
     price: 0.50,
     paidEps: 17,
-    platformFee: 0.20,
     production: 30000,
     management: 50000,
     marketing: 25000
@@ -49,7 +42,7 @@ function resetScenariosToDefault(){
 
 let cfg = { ...scenarios.decent };
 
-let currentChart = 'revenue';
+let currentChart = 'users';
 let chartInst = null;
 let costChartInst = null;
 let payoutChartInst = null;
@@ -58,45 +51,56 @@ let scBarChartInst = null;
 let isLight = false;
 let producerSplit = 0.80;
 let activeScenarioTab = 'min';
+let activeOverviewScenario = 'decent';
 
-// 6-month viewer curve: peak months 1-3, dropping 4-6, flat low 7-12
-// These are MULTIPLIERS applied to totalViewers
-const VIEWER_CURVE = [1.0, 0.80, 0.60, 0.20, 0.10, 0.05, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02];
+// 12-month paying user curve
+// Month 1-3: peak, Month 4-6: declining, Month 7-12: flat very low
+const USER_CURVE = [1.0, 0.85, 0.65, 0.30, 0.15, 0.08, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03];
 
 const PHASES = [
-  'Launch Peak','Growth','Early Momentum',
-  'Post-Peak Drop','Settling Down','Low Baseline',
-  'Steady State','Steady State','Steady State',
-  'Steady State','Steady State','Steady State'
+  'Launch Peak', 'Growth', 'Early Momentum',
+  'Post-Peak Drop', 'Settling Down', 'Low Baseline',
+  'Steady State', 'Steady State', 'Steady State',
+  'Steady State', 'Steady State', 'Steady State'
 ];
 
+const MONTH_LABELS = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+
 /* ═══════════════════════════════════════════
-   HELPERS
+   CORE CALCULATION
 ═══════════════════════════════════════════ */
-function fmt(n){ return 'RM '+Math.round(Math.abs(n)).toLocaleString(); }
-function fmtNet(n){ return (n>=0?'+ ':'− ')+'RM '+Math.round(Math.abs(n)).toLocaleString(); }
-
-function totalFixedFor(sc){ return (sc.production||0)+(sc.management||0)+(sc.marketing||0); }
-function totalFixed(){ return totalFixedFor(cfg); }
-
 function calcMonthDataFor(sc){
-  return VIEWER_CURVE.map(multiplier => {
-    const viewers  = Math.round(sc.totalViewers * multiplier);
-    const paying   = Math.round(viewers * (sc.conversionRate || 0.03));
-    const revenue  = paying * (sc.price || 0.40) * (sc.paidEps || 17);
-    const platFee  = revenue * (sc.platformFee || 0.20);
-    const netRev   = revenue - platFee;
-    return { viewers, paying, revenue, platFee, netRev };
+  const mf = totalFixedFor(sc) / 12;
+  return USER_CURVE.map(mult => {
+    const paying  = Math.round((sc.peakUsers || 0) * mult);
+    const revenue = paying * (sc.price || 0.40) * (sc.paidEps || 17);
+    const profit  = revenue - mf;
+    return { paying, revenue, profit, monthlyFixed: mf };
   });
 }
 function calcMonthData(){ return calcMonthDataFor(cfg); }
 
-function totalNetRevFor(sc){ return calcMonthDataFor(sc).reduce((a,d)=>a+d.netRev,0); }
-function totalNetRev(){ return totalNetRevFor(cfg); }
+function totalRevenueFor(sc){
+  return calcMonthDataFor(sc).reduce((a,d) => a + d.revenue, 0);
+}
+function totalRevenue(){ return totalRevenueFor(cfg); }
 
-function netProfitFor(sc){ return totalNetRevFor(sc) - totalFixedFor(sc); }
+function totalPayingUsersFor(sc){
+  return calcMonthDataFor(sc).reduce((a,d) => a + d.paying, 0);
+}
+
+function netProfitFor(sc){ return totalRevenueFor(sc) - totalFixedFor(sc); }
 function netProfit(){ return netProfitFor(cfg); }
+
+function totalFixedFor(sc){ return (sc.production||0) + (sc.management||0) + (sc.marketing||0); }
+function totalFixed(){ return totalFixedFor(cfg); }
 function monthlyFixed(){ return totalFixed() / 12; }
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function fmt(n){ return 'RM ' + Math.round(Math.abs(n)).toLocaleString(); }
+function fmtNet(n){ return (n >= 0 ? '+ ' : '− ') + 'RM ' + Math.round(Math.abs(n)).toLocaleString(); }
 
 function phaseStyle(p){
   if(['Launch Peak','Growth','Early Momentum'].includes(p)) return 'badge-gold';

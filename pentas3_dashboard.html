@@ -161,19 +161,6 @@
   </div>
 </div>
 
-<div class="screen" id="screen-calc">
-  <div class="calc-box" style="max-width:620px;">
-    <div class="calc-header">
-      <div class="calc-step">Step 2 of 3 — Configure 3 Scenarios</div>
-      <div class="calc-title">Budget Scenarios</div>
-      <div class="calc-sub">Define Minimum, Decent and Maximum budgets to compare investment outcomes</div>
-    </div>
-    <div class="scenario-tabs">
-      <button class="sc-tab active" id="tab-min" onclick="switchScenarioTab('min')"><span class="sc-tab-dot" style="background:#cd853f"></span>Minimum</button>
-      <button class="sc-tab" id="tab-decent" onclick="switchScenarioTab('decent')"><span class="sc-tab-dot" style="background:var(--gold)"></span>Decent</button>
-      <button class="sc-tab" id="tab-max" onclick="switchScenarioTab('max')"><span class="sc-tab-dot" style="background:#e05060"></span>Maximum</button>
-    </div>
-
     <!-- SCENARIO: MINIMUM -->
     <div id="sc-panel-min">
       <div style="text-align:center;margin-bottom:1.25rem;">
@@ -236,7 +223,7 @@
         <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>  
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div> 
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-decent" type="number" min="0" value="15000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-decent" type="number" min="0" value="30000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
@@ -251,7 +238,7 @@
         <div class="scenario-badge badge-max">&#128640; Maximum Budget</div>
         <div style="font-size:12px;color:var(--muted2);">Full-scale launch — premium production, aggressive marketing, max dramas</div>
       </div>
-    <div class="calc-section-title">&#128176; Pricing</div>
+<div class="calc-section-title">&#128176; Pricing</div>
       <div class="form-group">
         <label class="form-label">Price per episode (RM)</label>
         <div class="spin-group">
@@ -262,7 +249,7 @@
         <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>  
+      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-max" type="number" min="0" value="30000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-max" type="number" min="0" value="50000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
