@@ -1,3 +1,47 @@
+async function buildHistoryPage(){
+  const listEl = document.getElementById('historyList');
+  if(!auth.currentUser){
+    listEl.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">Sign in to see saved history.</div>`;
+    return;
+  }
+  const entries = await loadHistory(auth.currentUser.uid);
+  if(!entries.length){
+    listEl.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">
+      <div style="font-size:13px;">No saved history yet. Enter the dashboard to save your first entry.</div>
+    </div>`;
+    return;
+  }
+  listEl.innerHTML = entries.map(e => `
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-weight:600;">${e.label || 'Untitled'}${e.pinned ? ' 📌' : ''}</div>
+        <div style="font-size:11px;color:var(--muted2);">${(e.peakUsers||0).toLocaleString()} peak users · RM ${(e.price||0).toFixed(2)}/ep · ${fmtNet(e.netProfit||0)}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-secondary" onclick="restoreHistoryEntry('${e.id}')">Restore</button>
+        <button class="btn-secondary" onclick="renameHistoryPrompt('${e.id}','${(e.label||'').replace(/'/g,"\\'")}')">Rename</button>
+        <button class="btn-secondary" onclick="pinHistoryEntry(auth.currentUser.uid,'${e.id}',${!e.pinned}).then(buildHistoryPage)">${e.pinned?'Unpin':'Pin'}</button>
+        <button class="btn-secondary" onclick="deleteHistoryEntry(auth.currentUser.uid,'${e.id}').then(buildHistoryPage)">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function restoreHistoryEntry(id){
+  loadHistory(auth.currentUser.uid).then(entries=>{
+    const e = entries.find(x=>x.id===id);
+    if(!e || !e.scenarios) return;
+    scenarios = e.scenarios;
+    cfg = { ...scenarios.decent };
+    buildDashboard();
+    showScreen('screen-dashboard');
+  });
+}
+
+function renameHistoryPrompt(id, current){
+  const name = prompt('Rename this entry:', current);
+  if(name) renameHistoryEntry(auth.currentUser.uid, id, name).then(buildHistoryPage);
+}
+
 /* ═══════════════════════════════════════════
    BUILD DASHBOARD
 ═══════════════════════════════════════════ */

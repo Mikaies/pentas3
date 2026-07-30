@@ -88,37 +88,11 @@
     <div id="setupGreeting" style="display:none;text-align:center;margin-bottom:1.5rem;padding:1rem;background:var(--crimson);border-radius:var(--radius);">
       <div id="setupGreetingText" style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:#fff;"></div>
     </div>
-    <div class="calc-header">
-      <div class="calc-step">Step 1 of 3 — Basic Setup</div>
-      <div class="calc-title">Audience & Pricing</div>
-      <div class="calc-sub">Set your expected audience size and episode pricing before configuring budgets</div>
+  <div class="calc-header">
+      <div class="calc-step">Step 1 of 2 — Basic Setup</div>
+      <div class="calc-title">Episode Setup</div>
+      <div class="calc-sub">Set your paid episode count before configuring budgets</div>
     </div>
-
-    <div class="calc-section-title">&#128101; Expected Total Viewers</div>
-    <div class="form-group">
-      <input class="form-input" id="global-viewers" type="number" min="1000" step="1000" value="150000" oninput="updateSetupPreview()"/>
-      <div class="input-hint">How many people do you expect to discover and watch your drama?</div>
-    </div>
-
-    <div class="calc-divider"></div>
-
-    <div class="calc-section-title">&#128200; Conversion Rate <span class="free-tag">% who pay</span></div>
-    <div class="form-group">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;color:var(--muted2);">Conversion rate</span>
-        <span style="font-size:14px;font-weight:700;color:var(--gold);" id="conversion-label">3%</span>
-      </div>
-      <input type="range" id="global-conversion" min="1" max="10" value="3" step="1"
-        style="width:100%;accent-color:var(--gold);"
-        oninput="updateSetupPreview()"/>
-      <div style="display:flex;justify-content:space-between;margin-top:4px;">
-        <span style="font-size:10px;color:var(--muted);">1% (conservative)</span>
-        <span style="font-size:10px;color:var(--muted);">10% (optimistic)</span>
-      </div>
-      <div class="input-hint">Industry average for micro-drama platforms is 2–5%</div>
-    </div>
-
-    <div class="calc-divider"></div>
 
     <div class="calc-section-title">&#127916; Episode Structure <span class="free-tag">3 free + paid</span></div>
     <div class="form-group">
@@ -131,24 +105,7 @@
       <div class="input-hint">First 3 episodes always free. Users pay to unlock from episode 4 onwards.</div>
     </div>
 
-    <div class="calc-divider"></div>
-
-    <div class="calc-section-title">&#128176; Platform Fee <span class="free-tag">app store cut</span></div>
-    <div class="form-group">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;color:var(--muted2);">Platform/app store fee</span>
-        <span style="font-size:14px;font-weight:700;color:var(--crimson);" id="platform-fee-label">20%</span>
-      </div>
-      <input type="range" id="global-platform-fee" min="15" max="30" value="20" step="5"
-        style="width:100%;accent-color:var(--crimson);"
-        oninput="updateSetupPreview()"/>
-      <div style="display:flex;justify-content:space-between;margin-top:4px;">
-        <span style="font-size:10px;color:var(--muted);">15% (small platform)</span>
-        <span style="font-size:10px;color:var(--muted);">30% (Apple/Google)</span>
-      </div>
-    </div>
-
-    <div class="calc-divider"></div>
+    <div class="calc-divider"></div> 
 
     <div style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;">
       <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Preview</div>
@@ -186,16 +143,65 @@
   <label class="form-label">Conversion rate: <span id="conv-label-min">2%</span></label>
   <input type="range" id="inp-conversion-min" min="1" max="10" step="0.5" value="2"
     oninput="document.getElementById('conv-label-min').textContent=this.value+'%'"
-    style="width:100%;accent-color:var(--gold);"/>
-  <div class="input-hint">% of viewers who pay to unlock episode 4+</div>
-</div>
+    style="width:100%;accent-color:var(--gold);"
+    Claude finished the response
+    can you refer back and recheck from the lists i gave earlier?
+    
+    
+    Audited codebase against checklist, catalogued broken features and pending implementations
+    Audited codebase against checklist, catalogued broken features and pending implementations
+    I went back through the actual code line by line and checked every item against your earlier list. Here's the honest, updated status — some things you thought were only "partially done" actually turned out fine, and some things marked "done" have hidden breaks.
+    
+    ✅ Confirmed working (verified in the real code)
+    Firebase email/password login + register with name
+    Time-based greeting (Good Morning/Afternoon/Evening/Night), shows name not email
+    Admin bypass link (?admin=true) + admin welcome screen
+    Sign Out — resets to Sign In tab, hidden for admin
+    Profile modal — name/email/password all properly wired to Firebase
+    Producer/Director payout split slider
+    state.js — clean peakUsers + USER_CURVE model
+    6-month overview table
+    Config banner on the dashboard — this is actually already showing peak users correctly, not dramas (this was marked "pending" before, but it's done)
+    Cost chart — already replaced with a clean Revenue/Production/Management/Marketing/Net Profit bar chart (the old gross-profit chart is gone)
+    ⚠️ Partially done — has a real bug hiding inside
+    History page — the Firebase functions for save/rename/pin/delete all exist and work. But the function that actually builds and displays the list, buildHistoryPage(), is called when you click the History tab but is never defined anywhere in your code. So right now your History page is likely blank or broken when opened — the rename/pin/delete buttons have nothing to attach to.
+    Scenario summary screen (peak users vs dramas) — the number itself now correctly shows "X peak users." But the label above it on all 3 tabs still says "Dramas" — so it currently reads like "Dramas: 5,000 peak users," which is a leftover label that was never updated to match the value.
+    Blank last page in print — there's a CSS rule that looks like an attempted fix for this, but I can't confirm from the code alone whether it actually solved it. Needs an actual print test to verify.
+    ❌ Still not done / still broken
+    Cumulative income graph with break-even stats — no trace of this anywhere in the code. It was never built.
+    updateGlobalEpisodeVisual() — called in 4 places (sign in, register, admin enter, start over), never defined. Breaks silently every time.
+    global-drama-count — Start Over tries to update this, doesn't exist in the HTML.
+    globalDramas — still being saved/loaded/reset in your login code, even though it no longer exists in state.js.
+    Peak Users input missing from scenario panels — this is the main bug breaking your "Preview All 3 Scenarios" button.
+    Minimum tab's 3 unused fields (Expected Monthly Viewers, Conversion Rate, Platform Fee) — still there, not connected to anything.
+    Step 1 setup screen's unused fields — same 3 fields, plus a call to updateSetupPreview() which doesn't exist.
+    Want me to start with Fix 1 now?
+    
+    ok i want you to give all the fixes now and maybe give a mockup of how it will look like before executing in the vs code so i know what type of things need to fix first
+    
+    
+    Orchestrated comprehensive fixes across multiple files with visual mockup planning
+    Orchestrated comprehensive fixes across multiple files with visual mockup planning
+    
+    
+    Here's the mockup above showing exactly what changes on the Minimum scenario panel — the 3 broken fields get removed and replaced with one working "Peak paying users" field, same structure the Decent and Maximum tabs will get too.
+    
+    Now here are all the fixes, ready to paste into VS Code. Same format you asked for.
+    
+    Fix 1 — pentas3_dashboard.html — Minimum panel: remove 3 broken fields, add working Peak Users field
+    
+    Original:
+    
+    html
 <div class="form-group">
-  <label class="form-label">Platform fee: <span id="fee-label-min">20%</span></label>
-  <input type="range" id="inp-platformfee-min" min="10" max="30" step="1" value="20"
-    oninput="document.getElementById('fee-label-min').textContent=this.value+'%'"
-    style="width:100%;accent-color:var(--crimson);"/>
-  <div class="input-hint">App store / payment gateway cut</div>
-</div>
+  <label class="form-label">Peak paying users</label>
+  <div class="spin-group">
+    <button class="spin-btn" onclick="spinUsers('min',-100)" type="button">&#8722;</button>
+    <input class="spin-input" id="inp-users-min" type="number" min="100" value="1000"/>
+    <button class="spin-btn" onclick="spinUsers('min',100)" type="button">+</button>
+  </div>
+  <div class="input-hint">Highest number of paying users you expect in month 1</div>
+</div>    
 <div class="calc-divider"></div>
 <div class="calc-section-title">&#128202; Cost structure (RM)</div>
       <div class="cost-grid">
@@ -220,7 +226,16 @@
           <input class="spin-input" id="inp-price-decent" type="number" step="0.01" min="0.01" value="0.40"/>
           <button class="spin-btn" onclick="spinPrice('decent',0.10)" type="button">+</button>
         </div>
-        <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
+      <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peak paying users</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinUsers('decent',-100)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-users-decent" type="number" min="100" value="5000"/>
+          <button class="spin-btn" onclick="spinUsers('decent',100)" type="button">+</button>
+        </div>
+        <div class="input-hint">Highest number of paying users you expect in month 1</div>
       </div>
       <div class="calc-divider"></div>
       <div class="calc-section-title">&#128202; Cost structure (RM)</div> 
@@ -246,7 +261,16 @@
           <input class="spin-input" id="inp-price-max" type="number" step="0.01" min="0.01" value="0.50"/>
           <button class="spin-btn" onclick="spinPrice('max',0.10)" type="button">+</button>
         </div>
-        <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
+ <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peak paying users</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinUsers('max',-100)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-users-max" type="number" min="100" value="15000"/>
+          <button class="spin-btn" onclick="spinUsers('max',100)" type="button">+</button>
+        </div>
+        <div class="input-hint">Highest number of paying users you expect in month 1</div>
       </div>
       <div class="calc-divider"></div>
       <div class="calc-section-title">&#128202; Cost structure (RM)</div>
@@ -278,7 +302,7 @@
         <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#cd853f;margin-bottom:10px;">&#127807; Minimum</div>
         <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-min">—</div>
         <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-min">—</div>
-        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-min">—</div>
+        <div class="sc-sum-label">Peak Users</div><div class="sc-sum-val" id="ssum-dramas-min">—</div>
         <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-min">—</div>
         <div class="sc-sum-label">Est. Net Profit</div>
         <div class="sc-sum-net" id="ssum-net-min">—</div>
@@ -287,7 +311,7 @@
         <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">&#9878;&#65039; Decent</div>
         <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-decent">—</div>
         <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-decent">—</div>
-        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-decent">—</div>
+        <div class="sc-sum-label">Peak Users</div><div class="sc-sum-val" id="ssum-dramas-decent">—</div>
         <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-decent">—</div>
         <div class="sc-sum-label">Est. Net Profit</div>
         <div class="sc-sum-net" id="ssum-net-decent">—</div>
@@ -296,7 +320,7 @@
         <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e05060;margin-bottom:10px;">&#128640; Maximum</div>
         <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-max">—</div>
         <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-max">—</div>
-        <div class="sc-sum-label">Dramas</div><div class="sc-sum-val" id="ssum-dramas-max">—</div>
+         <div class="sc-sum-label">Peak Users</div><div class="sc-sum-val" id="ssum-dramas-max">—</div>
         <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-max">—</div>
         <div class="sc-sum-label">Est. Net Profit</div>
         <div class="sc-sum-net" id="ssum-net-max">—</div>

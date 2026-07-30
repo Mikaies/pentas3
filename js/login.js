@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   document.getElementById('btn-admin-enter').addEventListener('click', ()=>{
     showScreen('screen-setup');
-    updateGlobalEpisodeVisual();
     ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
   });
 
@@ -66,14 +65,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(data){
         userName = data.name || data.email || email;
         if(data.scenarios) scenarios = data.scenarios;
-        if(data.globalDramas) globalDramas = data.globalDramas;
         if(data.globalEps) globalEps = data.globalEps;
       } else {
         userName = email;
       }
       showGreeting(userName);
       showScreen('screen-setup');
-      updateGlobalEpisodeVisual();
       ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
     } catch(e){
       err.textContent = 'Incorrect email or password. Please try again.';
@@ -93,12 +90,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await saveUserData(cred.user.uid, { name, email });
       userName = name;
-      showGreeting(userName);
+     showGreeting(userName);
       showScreen('screen-setup');
-      updateGlobalEpisodeVisual();
       ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
     } catch(e){
-      err.textContent = e.message;
+      err.textContent = e.message;  
       err.classList.add('show');
     }
   });
@@ -109,7 +105,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     await auth.signOut();
     userName = '';
     resetScenariosToDefault();
-    globalDramas = 1;
     globalEps = 4;
     const pill = document.getElementById('topbarUserName');
     if(pill){ pill.style.display = 'none'; }
@@ -209,12 +204,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
 /* ── START OVER ── */
-  document.getElementById('btn-start-over').addEventListener('click',()=>{
-    globalDramas = 1;
+document.getElementById('btn-start-over').addEventListener('click',()=>{
     globalEps = 4;
-    document.getElementById('global-drama-count').textContent = globalDramas;
     document.getElementById('global-eps').value = globalEps;
-    updateGlobalEpisodeVisual();
     resetScenariosToDefault();
     showScreen('screen-setup');
   });
@@ -226,13 +218,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     showScreen('screen-dashboard');
     if(auth.currentUser){
       const netProfit = netProfitFor(scenarios.decent);
-      await saveUserData(auth.currentUser.uid, {
+       await saveUserData(auth.currentUser.uid, {
         scenarios,
-        globalDramas,
         globalEps,
       });
       await saveHistoryEntry(auth.currentUser.uid, {
-        dramas: globalDramas,
+        peakUsers: scenarios.decent.peakUsers,
         paidEps: globalEps,
         price: scenarios.decent.price,
         fixedCost: totalFixedFor(scenarios.decent),
