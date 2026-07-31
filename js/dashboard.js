@@ -7,23 +7,87 @@ async function buildHistoryPage(){
   const entries = await loadHistory(auth.currentUser.uid);
   if(!entries.length){
     listEl.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px;opacity:.4;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <div style="font-size:13px;">No saved history yet. Enter the dashboard to save your first entry.</div>
     </div>`;
     return;
   }
-  listEl.innerHTML = entries.map(e => `
-    <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="font-weight:600;">${e.label || 'Untitled'}${e.pinned ? ' 📌' : ''}</div>
-        <div style="font-size:11px;color:var(--muted2);">${(e.peakUsers||0).toLocaleString()} peak users · RM ${(e.price||0).toFixed(2)}/ep · ${fmtNet(e.netProfit||0)}</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-secondary" onclick="restoreHistoryEntry('${e.id}')">Restore</button>
-        <button class="btn-secondary" onclick="renameHistoryPrompt('${e.id}','${(e.label||'').replace(/'/g,"\\'")}')">Rename</button>
-        <button class="btn-secondary" onclick="pinHistoryEntry(auth.currentUser.uid,'${e.id}',${!e.pinned}).then(buildHistoryPage)">${e.pinned?'Unpin':'Pin'}</button>
-        <button class="btn-secondary" onclick="deleteHistoryEntry(auth.currentUser.uid,'${e.id}').then(buildHistoryPage)">Delete</button>
-      </div>
-    </div>`).join('');
+
+  // Sort: pinned first, then by date
+  entries.sort((a,b)=>{
+    if(a.pinned && !b.pinned) return -1;
+    if(!a.pinned && b.pinned) return 1;
+    const aT = a.savedAt ? a.savedAt.seconds : 0;
+    const bT = b.savedAt ? b.savedAt.seconds : 0;
+    return bT - aT;
+  });
+
+  listEl.innerHTML = entries.map(e=>{
+    const net = e.netProfit || 0;
+    const date = e.savedAt ? new Date(e.savedAt.seconds*1000).toLocaleString('en-MY',{
+      day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+    }) : '—';
+    const netColor = net >= 0 ? 'var(--gold)' : 'var(--crimson)';
+    const netText  = net >= 0 ? `+ RM ${Math.round(net).toLocaleString()}` : `− RM ${Math.round(Math.abs(net)).toLocaleString()}`;
+    const label    = e.label || '';
+    const pinIcon  = e.pinned ? '📌 ' : '';
+    const entryDataStr = JSON.stringify(e).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+
+    return `
+      <div class="history-card" data-id="${e.id}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;">
+        <div style="flex:1;min-width:0;">
+          ${label ? `<div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">${pinIcon}${label}</div>` : ''}
+          <div style="font-size:${label?'11px':'13px'};font-weight:${label?'400':'600'};color:${label?'var(--muted)':'var(--white)'};margin-bottom:4px;">${label?'':pinIcon}${date}</div>
+          <div style="font-size:11px;color:var(--muted2);margin-bottom:4px;">
+            ${(e.peakUsers||0).toLocaleString()} peak users · RM ${(e.price||0).toFixed(2)}/ep · ${e.paidEps||17} paid eps · Fixed RM ${Math.round(e.fixedCost||0).toLocaleString()}
+          </div>
+          <div style="font-size:12px;font-weight:600;color:${netColor};">Net profit: ${netText}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <button class="icon-btn" onclick="restoreHistoryEntry('${e.id}')" style="white-space:nowrap;">Restore</button>
+          <div class="hist-menu-wrap" style="position:relative;">
+            <button class="icon-btn hist-dots-btn" onclick="toggleHistMenu('${e.id}')" style="padding:6px 10px;font-size:16px;letter-spacing:2px;">···</button>
+            <div id="hist-menu-${e.id}" style="display:none;position:absolute;right:0;top:36px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);min-width:140px;z-index:100;overflow:hidden;">
+              <button onclick="histRename('${e.id}')" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--white);font-size:12px;text-align:left;cursor:pointer;">✏️ Rename</button>
+              <button onclick="histPin('${e.id}',${!e.pinned})" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--white);font-size:12px;text-align:left;cursor:pointer;">${e.pinned?'📌 Unpin':'📌 Pin to top'}</button>
+              <button onclick="histDelete('${e.id}')" style="display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--crimson);font-size:12px;text-align:left;cursor:pointer;">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleHistMenu(id){
+  const menu = document.getElementById('hist-menu-'+id);
+  const allMenus = document.querySelectorAll('[id^="hist-menu-"]');
+  allMenus.forEach(m=>{ if(m.id !== 'hist-menu-'+id) m.style.display='none'; });
+  menu.style.display = menu.style.display==='none'?'block':'none';
+  setTimeout(()=>{
+    document.addEventListener('click',(e)=>{
+      if(!e.target.closest('.hist-menu-wrap')){
+        document.querySelectorAll('[id^="hist-menu-"]').forEach(m=>m.style.display='none');
+      }
+    },{once:true});
+  },10);
+}
+
+async function histDelete(id){
+  if(!confirm('Delete this history entry?')) return;
+  await deleteHistoryEntry(auth.currentUser.uid, id);
+  buildHistoryPage();
+}
+
+async function histPin(id, pinned){
+  await pinHistoryEntry(auth.currentUser.uid, id, pinned);
+  buildHistoryPage();
+}
+
+async function histRename(id){
+  const newName = prompt('Enter a name for this entry:');
+  if(newName === null) return;
+  await renameHistoryEntry(auth.currentUser.uid, id, newName.trim());
+  buildHistoryPage();
 }
 
 function restoreHistoryEntry(id){
@@ -33,13 +97,12 @@ function restoreHistoryEntry(id){
     scenarios = e.scenarios;
     cfg = { ...scenarios.decent };
     buildDashboard();
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector('.nav-item[data-page="overview"]').classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-overview').classList.add('active');
     showScreen('screen-dashboard');
   });
-}
-
-function renameHistoryPrompt(id, current){
-  const name = prompt('Rename this entry:', current);
-  if(name) renameHistoryEntry(auth.currentUser.uid, id, name).then(buildHistoryPage);
 }
 
 /* ═══════════════════════════════════════════
@@ -65,12 +128,12 @@ function buildDashboard(){
   renderProjTable();
 
   // Scenario switcher
-  document.querySelectorAll('.sc-overview-btn').forEach(btn=>{
+document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const sc = btn.dataset.sc;
       activeOverviewScenario = sc;
       cfg = { ...scenarios[sc] };
-      document.querySelectorAll('.sc-overview-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sc-switch-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderOverviewMetrics();
       buildConfigBanner();

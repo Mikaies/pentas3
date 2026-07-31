@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 /* ── START OVER ── */
 document.getElementById('btn-start-over').addEventListener('click',()=>{
-    globalEps = 4;
+    globalEps = 0;
     document.getElementById('global-eps').value = globalEps;
     resetScenariosToDefault();
     showScreen('screen-setup');
