@@ -23,14 +23,10 @@
       <div class="login-title">Pentas3 Dashboard</div>
       <div class="login-sub">User Login</div>
     </div>
-
-    <!-- TAB SWITCHER -->
     <div style="display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;">
-      <button class="sc-tab active" id="tab-signin" id="tab-signin" style="flex:1;">Sign In</button>
+      <button class="sc-tab active" id="tab-signin" style="flex:1;">Sign In</button>
       <button class="sc-tab" id="tab-register" style="flex:1;">Register</button>
     </div>
-
-    <!-- SIGN IN FORM -->
     <div id="panel-signin">
       <div class="form-group">
         <label class="form-label" for="inp-email">Email</label>
@@ -43,8 +39,6 @@
       </div>
       <button class="btn-primary" id="btn-login">Sign In</button>
     </div>
-
-    <!-- REGISTER FORM -->
     <div id="panel-register" style="display:none;">
       <div class="form-group">
         <label class="form-label" for="inp-reg-name">Your Name</label>
@@ -88,12 +82,11 @@
     <div id="setupGreeting" style="display:none;text-align:center;margin-bottom:1.5rem;padding:1rem;background:var(--crimson);border-radius:var(--radius);">
       <div id="setupGreetingText" style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:#fff;"></div>
     </div>
-  <div class="calc-header">
+    <div class="calc-header">
       <div class="calc-step">Step 1 of 2 — Basic Setup</div>
       <div class="calc-title">Episode Setup</div>
-      <div class="calc-sub">Set your paid episode count before configuring budgets</div>
+      <div class="calc-sub">Set your paid episode count before configuring scenarios</div>
     </div>
-
     <div class="calc-section-title">&#127916; Episode Structure <span class="free-tag">3 free + paid</span></div>
     <div class="form-group">
       <label class="form-label">Number of paid episodes</label>
@@ -104,106 +97,53 @@
       </div>
       <div class="input-hint">First 3 episodes always free. Users pay to unlock from episode 4 onwards.</div>
     </div>
-
-    <div class="calc-divider"></div> 
-
-    <div style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Preview</div>
-      <div id="setup-preview" style="font-size:12px;color:var(--muted2);line-height:1.9;"></div>
-    </div>
-
+    <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
-      <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Budget Scenarios &#8594;</button>
+      <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Configure Scenarios &#8594;</button>
     </div>
   </div>
 </div>
 
-    <!-- SCENARIO: MINIMUM -->
+<!-- ══ SCREEN 2: SCENARIO CALCULATOR ══ -->
+<div class="screen" id="screen-calc">
+  <div class="calc-box" style="max-width:620px;">
+    <div class="calc-header">
+      <div class="calc-step">Step 2 of 2 — Configure Scenarios</div>
+      <div class="calc-title">Scenario Projections</div>
+      <div class="calc-sub">Set peak paying users, price per episode and fixed costs for each scenario</div>
+    </div>
+    <div class="scenario-tabs">
+      <button class="sc-tab active" id="tab-min" onclick="switchScenarioTab('min')"><span class="sc-tab-dot" style="background:#cd853f"></span>Minimum</button>
+      <button class="sc-tab" id="tab-decent" onclick="switchScenarioTab('decent')"><span class="sc-tab-dot" style="background:var(--gold)"></span>Decent</button>
+      <button class="sc-tab" id="tab-max" onclick="switchScenarioTab('max')"><span class="sc-tab-dot" style="background:#e05060"></span>Maximum</button>
+    </div>
+
+    <!-- MINIMUM -->
     <div id="sc-panel-min">
       <div style="text-align:center;margin-bottom:1.25rem;">
-        <div class="scenario-badge badge-min">&#127807; Minimum Budget</div>
-        <div style="font-size:12px;color:var(--muted2);">Conservative investment — lean team, tight spend, proof of concept</div>
+        <div class="scenario-badge badge-min">&#127807; Minimum</div>
+        <div style="font-size:12px;color:var(--muted2);">Conservative projection — small but realistic paying user base</div>
       </div>
-      <div class="calc-section-title">&#128176; Pricing</div>
+      <div class="calc-section-title">&#128101; Peak Paying Users</div>
       <div class="form-group">
-  <label class="form-label">Price per episode (RM)</label>
-  <div class="spin-group">
-    <button class="spin-btn" onclick="spinPrice('min',-0.10)" type="button">&#8722;</button>
-    <input class="spin-input" id="inp-price-min" type="number" step="0.01" min="0.01" value="0.30"/>
-    <button class="spin-btn" onclick="spinPrice('min',0.10)" type="button">+</button>
-  </div>
-  <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
-</div>
-<div class="form-group">
-  <label class="form-label">Expected monthly viewers (peak)</label>
-  <input class="form-input" id="inp-viewers-min" type="number" min="0" value="20000"/>
-  <div class="input-hint">How many people you expect to reach at launch</div>
-</div>
-<div class="form-group">
-  <label class="form-label">Conversion rate: <span id="conv-label-min">2%</span></label>
-  <input type="range" id="inp-conversion-min" min="1" max="10" step="0.5" value="2"
-    oninput="document.getElementById('conv-label-min').textContent=this.value+'%'"
-    style="width:100%;accent-color:var(--gold);"
-    Claude finished the response
-    can you refer back and recheck from the lists i gave earlier?
-    
-    
-    Audited codebase against checklist, catalogued broken features and pending implementations
-    Audited codebase against checklist, catalogued broken features and pending implementations
-    I went back through the actual code line by line and checked every item against your earlier list. Here's the honest, updated status — some things you thought were only "partially done" actually turned out fine, and some things marked "done" have hidden breaks.
-    
-    ✅ Confirmed working (verified in the real code)
-    Firebase email/password login + register with name
-    Time-based greeting (Good Morning/Afternoon/Evening/Night), shows name not email
-    Admin bypass link (?admin=true) + admin welcome screen
-    Sign Out — resets to Sign In tab, hidden for admin
-    Profile modal — name/email/password all properly wired to Firebase
-    Producer/Director payout split slider
-    state.js — clean peakUsers + USER_CURVE model
-    6-month overview table
-    Config banner on the dashboard — this is actually already showing peak users correctly, not dramas (this was marked "pending" before, but it's done)
-    Cost chart — already replaced with a clean Revenue/Production/Management/Marketing/Net Profit bar chart (the old gross-profit chart is gone)
-    ⚠️ Partially done — has a real bug hiding inside
-    History page — the Firebase functions for save/rename/pin/delete all exist and work. But the function that actually builds and displays the list, buildHistoryPage(), is called when you click the History tab but is never defined anywhere in your code. So right now your History page is likely blank or broken when opened — the rename/pin/delete buttons have nothing to attach to.
-    Scenario summary screen (peak users vs dramas) — the number itself now correctly shows "X peak users." But the label above it on all 3 tabs still says "Dramas" — so it currently reads like "Dramas: 5,000 peak users," which is a leftover label that was never updated to match the value.
-    Blank last page in print — there's a CSS rule that looks like an attempted fix for this, but I can't confirm from the code alone whether it actually solved it. Needs an actual print test to verify.
-    ❌ Still not done / still broken
-    Cumulative income graph with break-even stats — no trace of this anywhere in the code. It was never built.
-    updateGlobalEpisodeVisual() — called in 4 places (sign in, register, admin enter, start over), never defined. Breaks silently every time.
-    global-drama-count — Start Over tries to update this, doesn't exist in the HTML.
-    globalDramas — still being saved/loaded/reset in your login code, even though it no longer exists in state.js.
-    Peak Users input missing from scenario panels — this is the main bug breaking your "Preview All 3 Scenarios" button.
-    Minimum tab's 3 unused fields (Expected Monthly Viewers, Conversion Rate, Platform Fee) — still there, not connected to anything.
-    Step 1 setup screen's unused fields — same 3 fields, plus a call to updateSetupPreview() which doesn't exist.
-    Want me to start with Fix 1 now?
-    
-    ok i want you to give all the fixes now and maybe give a mockup of how it will look like before executing in the vs code so i know what type of things need to fix first
-    
-    
-    Orchestrated comprehensive fixes across multiple files with visual mockup planning
-    Orchestrated comprehensive fixes across multiple files with visual mockup planning
-    
-    
-    Here's the mockup above showing exactly what changes on the Minimum scenario panel — the 3 broken fields get removed and replaced with one working "Peak paying users" field, same structure the Decent and Maximum tabs will get too.
-    
-    Now here are all the fixes, ready to paste into VS Code. Same format you asked for.
-    
-    Fix 1 — pentas3_dashboard.html — Minimum panel: remove 3 broken fields, add working Peak Users field
-    
-    Original:
-    
-    html
-<div class="form-group">
-  <label class="form-label">Peak paying users</label>
-  <div class="spin-group">
-    <button class="spin-btn" onclick="spinUsers('min',-100)" type="button">&#8722;</button>
-    <input class="spin-input" id="inp-users-min" type="number" min="100" value="1000"/>
-    <button class="spin-btn" onclick="spinUsers('min',100)" type="button">+</button>
-  </div>
-  <div class="input-hint">Highest number of paying users you expect in month 1</div>
-</div>    
-<div class="calc-divider"></div>
-<div class="calc-section-title">&#128202; Cost structure (RM)</div>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinUsers('min',-100)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-users-min" type="number" min="100" step="100" value="1000"/>
+          <button class="spin-btn" onclick="spinUsers('min',100)" type="button">+</button>
+        </div>
+        <div class="input-hint">Expected paying users at peak month (Month 1)</div>
+      </div>
+      <div class="calc-section-title">&#128176; Price per episode (RM)</div>
+      <div class="form-group">
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinPrice('min',-0.10)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-price-min" type="number" step="0.01" min="0.01" value="0.30"/>
+          <button class="spin-btn" onclick="spinPrice('min',0.10)" type="button">+</button>
+        </div>
+        <div class="input-hint">RM 0.30 baseline — clears gateway fees, low friction</div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-section-title">&#128202; Fixed costs (RM)</div>
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-min" type="number" min="0" value="8000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-min" type="number" min="0" value="15000" oninput="updateTotalCostFor('min')" style="padding-left:38px;"/></div></div>
@@ -212,33 +152,32 @@
       <div class="total-cost-bar"><div class="total-cost-label">Total fixed cost</div><div class="total-cost-val" id="total-cost-display-min">RM 28,000</div></div>
     </div>
 
-    <!-- SCENARIO: DECENT -->
+    <!-- DECENT -->
     <div id="sc-panel-decent" style="display:none;">
       <div style="text-align:center;margin-bottom:1.25rem;">
-        <div class="scenario-badge badge-decent">&#9878;&#65039; Decent Budget</div>
-        <div style="font-size:12px;color:var(--muted2);">Balanced investment — solid production, moderate marketing push</div>
+        <div class="scenario-badge badge-decent">&#9878;&#65039; Decent</div>
+        <div style="font-size:12px;color:var(--muted2);">Realistic projection — moderate paying user base with solid growth</div>
       </div>
-    <div class="calc-section-title">&#128176; Pricing</div>
+      <div class="calc-section-title">&#128101; Peak Paying Users</div>
       <div class="form-group">
-        <label class="form-label">Price per episode (RM)</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinUsers('decent',-100)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-users-decent" type="number" min="100" step="100" value="5000"/>
+          <button class="spin-btn" onclick="spinUsers('decent',100)" type="button">+</button>
+        </div>
+        <div class="input-hint">Expected paying users at peak month (Month 1)</div>
+      </div>
+      <div class="calc-section-title">&#128176; Price per episode (RM)</div>
+      <div class="form-group">
         <div class="spin-group">
           <button class="spin-btn" onclick="spinPrice('decent',-0.10)" type="button">&#8722;</button>
           <input class="spin-input" id="inp-price-decent" type="number" step="0.01" min="0.01" value="0.40"/>
           <button class="spin-btn" onclick="spinPrice('decent',0.10)" type="button">+</button>
         </div>
-      <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Peak paying users</label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinUsers('decent',-100)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-users-decent" type="number" min="100" value="5000"/>
-          <button class="spin-btn" onclick="spinUsers('decent',100)" type="button">+</button>
-        </div>
-        <div class="input-hint">Highest number of paying users you expect in month 1</div>
+        <div class="input-hint">RM 0.40 moderate — psychological sweet spot</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div> 
+      <div class="calc-section-title">&#128202; Fixed costs (RM)</div>
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-decent" type="number" min="0" value="15000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-decent" type="number" min="0" value="30000" oninput="updateTotalCostFor('decent')" style="padding-left:38px;"/></div></div>
@@ -247,33 +186,32 @@
       <div class="total-cost-bar"><div class="total-cost-label">Total fixed cost</div><div class="total-cost-val" id="total-cost-display-decent">RM 55,000</div></div>
     </div>
 
-    <!-- SCENARIO: MAXIMUM -->
+    <!-- MAXIMUM -->
     <div id="sc-panel-max" style="display:none;">
       <div style="text-align:center;margin-bottom:1.25rem;">
-        <div class="scenario-badge badge-max">&#128640; Maximum Budget</div>
-        <div style="font-size:12px;color:var(--muted2);">Full-scale launch — premium production, aggressive marketing, max dramas</div>
+        <div class="scenario-badge badge-max">&#128640; Maximum</div>
+        <div style="font-size:12px;color:var(--muted2);">Optimistic projection — strong paying user base with aggressive marketing</div>
       </div>
-<div class="calc-section-title">&#128176; Pricing</div>
+      <div class="calc-section-title">&#128101; Peak Paying Users</div>
       <div class="form-group">
-        <label class="form-label">Price per episode (RM)</label>
+        <div class="spin-group">
+          <button class="spin-btn" onclick="spinUsers('max',-100)" type="button">&#8722;</button>
+          <input class="spin-input" id="inp-users-max" type="number" min="100" step="100" value="15000"/>
+          <button class="spin-btn" onclick="spinUsers('max',100)" type="button">+</button>
+        </div>
+        <div class="input-hint">Expected paying users at peak month (Month 1)</div>
+      </div>
+      <div class="calc-section-title">&#128176; Price per episode (RM)</div>
+      <div class="form-group">
         <div class="spin-group">
           <button class="spin-btn" onclick="spinPrice('max',-0.10)" type="button">&#8722;</button>
           <input class="spin-input" id="inp-price-max" type="number" step="0.01" min="0.01" value="0.50"/>
           <button class="spin-btn" onclick="spinPrice('max',0.10)" type="button">+</button>
         </div>
- <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Peak paying users</label>
-        <div class="spin-group">
-          <button class="spin-btn" onclick="spinUsers('max',-100)" type="button">&#8722;</button>
-          <input class="spin-input" id="inp-users-max" type="number" min="100" value="15000"/>
-          <button class="spin-btn" onclick="spinUsers('max',100)" type="button">+</button>
-        </div>
-        <div class="input-hint">Highest number of paying users you expect in month 1</div>
+        <div class="input-hint">RM 0.50 premium — safely below iQIYI subscription</div>
       </div>
       <div class="calc-divider"></div>
-      <div class="calc-section-title">&#128202; Cost structure (RM)</div>
+      <div class="calc-section-title">&#128202; Fixed costs (RM)</div>
       <div class="cost-grid">
         <div class="cost-card"><div class="cost-card-label">Production</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-production-max" type="number" min="0" value="30000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
         <div class="cost-card"><div class="cost-card-label">Management</div><div class="input-addon"><span class="addon-text">RM</span><input class="form-input" id="inp-management-max" type="number" min="0" value="50000" oninput="updateTotalCostFor('max')" style="padding-left:38px;"/></div></div>
@@ -290,12 +228,13 @@
   </div>
 </div>
 
+<!-- ══ SCREEN 3: SUMMARY ══ -->
 <div class="screen" id="screen-summary">
   <div class="summary-box" style="max-width:680px;">
     <div class="summary-header">
       <div class="summary-check">✓</div>
       <div class="summary-title">Scenarios Overview</div>
-      <div class="summary-sub">Compare all 3 budget scenarios before entering the dashboard</div>
+      <div class="summary-sub">Compare all 3 scenarios before entering the dashboard</div>
     </div>
     <div class="sc-summary-grid">
       <div class="sc-summary-card sc-min">
@@ -320,7 +259,7 @@
         <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e05060;margin-bottom:10px;">&#128640; Maximum</div>
         <div class="sc-sum-label">Price/ep</div><div class="sc-sum-val" id="ssum-price-max">—</div>
         <div class="sc-sum-label">Paid Episodes</div><div class="sc-sum-val" id="ssum-eps-max">—</div>
-         <div class="sc-sum-label">Peak Users</div><div class="sc-sum-val" id="ssum-dramas-max">—</div>
+        <div class="sc-sum-label">Peak Users</div><div class="sc-sum-val" id="ssum-dramas-max">—</div>
         <div class="sc-sum-label">Fixed Cost</div><div class="sc-sum-val" id="ssum-fixed-max">—</div>
         <div class="sc-sum-label">Est. Net Profit</div>
         <div class="sc-sum-net" id="ssum-net-max">—</div>
@@ -357,19 +296,19 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Edit Scenarios
       </button>
-  <button class="icon-btn" id="btn-print-pdf">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <polyline points="6 9 6 2 18 2 18 9"/>
-    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
-    <rect x="6" y="14" width="12" height="8"/>
-  </svg>
-  Print
-</button>
+      <button class="icon-btn" id="btn-print-pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Print
+      </button>
       <button class="icon-btn" id="btn-start-over">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         Start Over
       </button>
-     <button class="icon-btn" id="btn-profile">
+      <button class="icon-btn" id="btn-profile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         Profile
       </button>
@@ -394,7 +333,7 @@
       <div class="nav-item" data-page="payout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Payout Split
       </div>
-       <div class="nav-item" data-page="scenarios">
+      <div class="nav-item" data-page="scenarios">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Scenarios Compare
       </div>
       <div class="nav-item" data-page="history">
@@ -408,8 +347,6 @@
 
       <!-- OVERVIEW -->
       <div class="page active" id="page-overview">
-
-        <!-- PRINT HEADER (shown only when printing, first page only) -->
         <div class="print-header">
           <div class="print-header-left">
             <img src="assets/pentas3_leaf_icon.png" alt="Pentas3" class="print-logo-img"/>
@@ -420,36 +357,27 @@
           </div>
           <div class="print-header-right" id="printHeaderMeta"></div>
         </div>
-
         <div class="page-header">
           <div class="page-title">Overview</div>
           <div class="page-sub" id="dash-sub">—</div>
         </div>
-
-  <!-- SCENARIO SWITCHER -->
-  <div class="scenario-switcher">
-    <button class="sc-switch-btn active" id="switch-min" onclick="switchOverviewScenario('min')">
-      🌿 Minimum
-    </button>
-    <button class="sc-switch-btn" id="switch-decent" onclick="switchOverviewScenario('decent')">
-      ⚙️ Decent
-    </button>
-    <button class="sc-switch-btn" id="switch-max" onclick="switchOverviewScenario('max')">
-      🚀 Maximum
-    </button>
-  </div>
-
-  <div class="config-banner" id="configBanner"></div>
-
-  <!-- BREAK-EVEN INDICATOR -->
-  <div class="breakeven-card" id="breakevenCard"></div>
+        <div class="scenario-switcher">
+          <button class="sc-switch-btn min active" data-sc="min" id="switch-min">&#127807; Minimum</button>
+          <button class="sc-switch-btn decent" data-sc="decent" id="switch-decent">&#9878;&#65039; Decent</button>
+          <button class="sc-switch-btn max" data-sc="max" id="switch-max">&#128640; Maximum</button>
+        </div>
+        <div class="config-banner" id="configBanner"></div>
+        <div class="breakeven-card" id="breakevenCard">
+          <div class="breakeven-title">&#128161; Break-even point</div>
+          <div id="breakEvenContent"></div>
+        </div>
         <div class="metrics-grid" id="overviewMetrics"></div>
         <div class="card">
           <div class="card-header">
-            <div><div class="card-title">Monthly revenue breakdown</div><div class="card-sub">12-month projection based on your configuration</div></div>
+            <div><div class="card-title">Monthly breakdown</div><div class="card-sub">12-month projection based on your configuration</div></div>
             <div class="chart-tabs">
-              <button class="ctab active" data-chart="revenue">Revenue</button>
-              <button class="ctab" data-chart="users">Users</button>
+              <button class="ctab active" data-chart="users">Paying users</button>
+              <button class="ctab" data-chart="revenue">Revenue</button>
               <button class="ctab" data-chart="net">Net profit</button>
             </div>
           </div>
@@ -461,9 +389,9 @@
           <div class="detail-grid" id="detailGrid"></div>
         </div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Monthly breakdown table</div><div class="card-sub" style="font-size:11px;color:var(--muted)">Click any row for details</div></div>
+          <div class="card-header"><div class="card-title">Monthly breakdown table (first 6 months)</div><div class="card-sub" style="font-size:11px;color:var(--muted)">Click any row for details</div></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Platform fee</th><th>Net revenue</th><th>Net profit</th>
+            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Net profit</th>
           </tr></thead><tbody id="tableBody"></tbody></table></div>
         </div>
       </div>
@@ -472,17 +400,13 @@
       <div class="page" id="page-projections">
         <div class="page-header">
           <div class="page-title">12-Month Projections</div>
-          <div class="page-sub">Holiday-adjusted · Malaysian public holidays anchored for months 7–12</div>
+          <div class="page-sub">Full year projection — peak launch then steady state</div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Full projection table</div></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Month</th><th>Phase & holiday</th><th>Viewers</th><th>Paying users</th><th>Revenue</th><th>Platform fee</th><th>Net revenue</th><th>Monthly fixed</th><th>Net profit</th>
+            <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Monthly fixed</th><th>Net profit</th>
           </tr></thead><tbody id="projTableBody"></tbody></table></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Holiday alignment — months 7–12</div></div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;" id="holidayCards"></div>
         </div>
       </div>
 
@@ -494,27 +418,25 @@
         </div>
         <div class="sc-grid" id="costCards"></div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Cost vs gross profit comparison</div></div>
+          <div class="card-header"><div class="card-title">Revenue vs costs overview</div></div>
           <div style="position:relative;width:100%;height:260px;"><canvas id="costChart"></canvas></div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Pricing rationale</div></div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
-            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.30 baseline</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">Clears payment gateway fees (Touch 'n Go / FPX). Avoids "cheap content" perception while keeping friction low.</div></div>
+            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.30 baseline</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">Clears payment gateway fees. Avoids cheap content perception while keeping friction low.</div></div>
             <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.40 moderate</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 6.80 total stays well under a fast-food meal. Psychological sweetspot between accessible and premium.</div></div>
-            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.50 maximum</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 8.50 total sits safely below the RM 16.90/month iQIYI subscription — avoids direct streaming comparison.</div></div>
+            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.50 maximum</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 8.50 total sits safely below the RM 16.90/month iQIYI subscription.</div></div>
           </div>
         </div>
       </div>
 
- <!-- PAYOUT -->
+      <!-- PAYOUT -->
       <div class="page" id="page-payout">
         <div class="page-header">
           <div class="page-title">Payout Split</div>
           <div class="page-sub">Revenue distribution — Producer · Director · Pentas3</div>
         </div>
-
-        <!-- ADJUSTABLE SPLIT -->
         <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-header"><div class="card-title">Adjust payout split</div></div>
           <div style="padding:.5rem 0;">
@@ -532,7 +454,6 @@
             <div style="font-size:11px;color:var(--muted);margin-top:8px;">Director gets the remaining share. Pentas3 takes transaction costs only.</div>
           </div>
         </div>
-
         <div class="payout-grid">
           <div class="payout-card" style="border-color:rgba(212,175,55,.4)"><div class="payout-role">Producer</div><div class="payout-pct gold" id="po-producer-pct">80%</div><div class="payout-desc">Primary content creator share</div><div class="payout-amt" id="po-producer">—</div></div>
           <div class="payout-card" style="border-color:rgba(245,245,245,.3)"><div class="payout-role">Director</div><div class="payout-pct" style="color:var(--white)" id="po-director-pct">20%</div><div class="payout-desc">Creative direction share</div><div class="payout-amt" id="po-director">—</div></div>
@@ -543,13 +464,13 @@
           <div style="position:relative;width:100%;height:240px;"><canvas id="payoutChart"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Profitability for producer & director</div></div>
+          <div class="card-header"><div class="card-title">Profitability for producer &amp; director</div></div>
           <div style="padding:1rem;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);margin-bottom:12px;" id="producerInsight"></div>
-          <div class="table-wrap"><table><thead><tr><th>Role</th><th>Share</th><th>Amount from net profit</th><th>Per drama</th></tr></thead><tbody id="payoutDetailBody"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>Role</th><th>Share</th><th>Amount from net profit</th><th>Notes</th></tr></thead><tbody id="payoutDetailBody"></tbody></table></div>
         </div>
       </div>
 
-      <!-- SCENARIOS COMPARISON -->
+      <!-- SCENARIOS -->
       <div class="page" id="page-scenarios">
         <div class="page-header">
           <div class="page-title">Scenarios Comparison</div>
@@ -558,17 +479,17 @@
         <div id="scCompareMetrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;"></div>
         <div class="card">
           <div class="card-header">
-            <div><div class="card-title">Net profit trajectory — all 3 scenarios</div><div class="card-sub">Monthly net profit across 12 months · hover for details</div></div>
+            <div><div class="card-title">Net profit trajectory — all 3 scenarios</div><div class="card-sub">Monthly net profit across 12 months</div></div>
           </div>
           <div style="display:flex;gap:16px;margin-bottom:12px;" id="scCompareLegend"></div>
           <div style="position:relative;width:100%;height:300px;"><canvas id="scCompareChart"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Revenue vs Investment comparison</div><div class="card-sub">Total revenue, fixed cost and net profit per scenario</div></div>
+          <div class="card-header"><div class="card-title">Revenue vs investment comparison</div></div>
           <div style="position:relative;width:100%;height:260px;"><canvas id="scBarChart"></canvas></div>
         </div>
         <div class="card" id="scPredictionCard">
-          <div class="card-header"><div class="card-title">&#127775; Best Outcome Prediction</div></div>
+          <div class="card-header"><div class="card-title">&#127775; Best outcome prediction</div></div>
           <div id="scPredictionBody" style="padding:.5rem 0;"></div>
         </div>
         <div class="card">
@@ -585,7 +506,7 @@
         </div>
       </div>
 
-<!-- HISTORY -->
+      <!-- HISTORY -->
       <div class="page" id="page-history">
         <div class="page-header">
           <div class="page-title">Saved History</div>
@@ -598,17 +519,16 @@
           </div>
         </div>
       </div>
-      
-      <div class="print-footer">Pentas3 Financial Dashboard Report</div>
 
+      <div class="print-footer">Pentas3 Financial Dashboard Report</div>
     </main>
   </div>
 </div>
 
-<!-- Firebase CDN (must come before firebase.js) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script src="js/state.js"></script>
 <script src="js/firebase.js"></script>
@@ -618,7 +538,7 @@
 <script src="js/charts.js"></script>
 <script src="js/scenarios.js"></script>
 
-<!-- ══ PROFILE MODAL ══ -->
+<!-- PROFILE MODAL -->
 <div id="profileModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
   <div class="login-box" style="max-width:420px;position:relative;max-height:90vh;overflow-y:auto;">
     <button onclick="closeProfileModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">✕</button>
@@ -626,16 +546,11 @@
       <div class="login-title">Edit Profile</div>
       <div class="login-sub">Update your name, email or password</div>
     </div>
-
-    <!-- NAME -->
     <div class="form-group">
       <label class="form-label" for="inp-profile-name">Display Name</label>
       <input class="form-input" id="inp-profile-name" type="text" placeholder="Your name"/>
     </div>
-
     <div class="calc-divider"></div>
-
-    <!-- EMAIL CHANGE -->
     <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:10px;">Change Email</div>
     <div class="form-group">
       <label class="form-label" for="inp-profile-email">New Email</label>
@@ -645,10 +560,7 @@
       <label class="form-label" for="inp-profile-currpass">Current Password</label>
       <input class="form-input" id="inp-profile-currpass" type="password" placeholder="Required to change email"/>
     </div>
-
     <div class="calc-divider"></div>
-
-    <!-- PASSWORD CHANGE -->
     <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:10px;">Change Password</div>
     <div class="form-group">
       <label class="form-label" for="inp-profile-newpass">New Password</label>
@@ -658,7 +570,6 @@
       <label class="form-label" for="inp-profile-currpass2">Current Password</label>
       <input class="form-input" id="inp-profile-currpass2" type="password" placeholder="Required to change password"/>
     </div>
-
     <div class="form-error" id="profile-error"></div>
     <div style="color:var(--gold);font-size:11px;margin-bottom:10px;" id="profile-success"></div>
     <button class="btn-primary" id="btn-profile-save">Save Changes</button>
