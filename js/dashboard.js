@@ -126,6 +126,7 @@ function buildDashboard(){
   buildPayoutChart();
   buildPayoutTable();
   renderProjTable();
+  buildCumulativeChart();
 
   // Scenario switcher
 document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
@@ -146,6 +147,7 @@ document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
       buildPayoutChart();
       buildPayoutTable();
       renderProjTable();
+      buildCumulativeChart();
     });
   });
 
@@ -292,5 +294,109 @@ function renderProjTable(){
       <td style="color:var(--muted2)">${fmt(totalFixed())}</td>
       <td class="${net>=0?'pos-val':'neg-val'}">${fmtNet(net)}</td>
     </tr>`);
-  document.getElementById('projTableBody').innerHTML = rows.join('');
+document.getElementById('projTableBody').innerHTML = rows.join('');
+}
+
+/* ═══════════════════════════════════════════
+   CUMULATIVE INCOME CHART
+═══════════════════════════════════════════ */
+function buildCumulativeChart(){
+  if(window.cumulChartInst){ window.cumulChartInst.destroy(); window.cumulChartInst=null; }
+  const ctx = document.getElementById('cumulChart').getContext('2d');
+  const SC_COLORS = { min:'#cd853f', decent:'#D4AF37', max:'#e05060' };
+  const SC_LABELS = { min:'Minimum', decent:'Decent', max:'Maximum' };
+  const datasets = [];
+  const cardData = {};
+
+  ['min','decent','max'].forEach(sc=>{
+    const s     = scenarios[sc];
+    const fixed = totalFixedFor(s);
+    const data  = calcMonthDataFor(s);
+    let cumIncome = 0;
+    const incomePoints = data.map(d=>{ cumIncome += d.revenue; return Math.round(cumIncome); });
+
+    let breakevenMonth = '—';
+    for(let i = 0; i < incomePoints.length; i++){
+      if(incomePoints[i] >= fixed){ breakevenMonth = 'Month '+(i+1); break; }
+    }
+
+    cardData[sc] = {
+      breakevenMonth,
+      cumIncome: Math.round(cumIncome),
+      netProfit: Math.round(netProfitFor(s))
+    };
+
+    datasets.push({
+      label: SC_LABELS[sc],
+      data: incomePoints,
+      borderColor: SC_COLORS[sc],
+      backgroundColor: 'transparent',
+      borderWidth: 2.5,
+      tension: 0.4,
+      pointRadius: 4,
+      pointBackgroundColor: SC_COLORS[sc]
+    });
+
+    datasets.push({
+      label: SC_LABELS[sc]+' cost',
+      data: Array(12).fill(fixed),
+      borderColor: SC_COLORS[sc],
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderDash: [6,4],
+      pointRadius: 0,
+      tension: 0
+    });
+  });
+
+  const gc = isLight?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.06)';
+  const tc = isLight?'#888':'#666';
+
+  window.cumulChartInst = new Chart(ctx,{
+    type:'line',
+    data:{ labels:MONTH_LABELS, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:true, position:'top', labels:{ color:'#aaa', font:{size:11},
+          filter: item => !item.text.includes('cost') }},
+        tooltip:{ callbacks:{ label: c => c.dataset.label+': RM '+Math.round(c.parsed.y).toLocaleString() }}
+      },
+      scales:{
+        x:{ grid:{color:gc}, ticks:{color:tc, font:{size:10}} },
+        y:{ grid:{color:gc}, ticks:{color:tc, font:{size:10}, callback: v=>'RM '+v.toLocaleString() }}
+      }
+    }
+  });
+
+  const SC_BORDER = { min:'#cd853f', decent:'var(--gold)', max:'#e05060' };
+  document.getElementById('cumulCards').innerHTML = ['min','decent','max'].map(sc=>`
+    <div style="background:var(--surface2);border:1px solid var(--border);border-top:3px solid ${SC_BORDER[sc]};border-radius:var(--radius);padding:1rem;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${SC_COLORS[sc]};margin-bottom:8px;">${SC_LABELS[sc]}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Breakeven</div>
+      <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;">${cardData[sc].breakevenMonth}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Cumulative income</div>
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--gold);margin-bottom:8px;">${fmt(cardData[sc].cumIncome)}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Net profit</div>
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:600;color:${cardData[sc].netProfit>=0?'var(--gold)':'var(--crimson)'};">${fmtNet(cardData[sc].netProfit)}</div>
+    </div>
+  `).join('');
+
+  const d   = scenarios.decent;
+  const net = netProfitFor(d);
+  const pPct = Math.round(producerSplit*100);
+  const dPct = 100-pPct;
+  document.getElementById('cumulSummary').innerHTML = `
+    <div style="background:var(--surface3);border-radius:var(--radius);padding:.75rem 1rem;">
+      <div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Revenue</div>
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--white);">${fmt(totalRevenueFor(d))}</div>
+    </div>
+    <div style="background:var(--surface3);border-radius:var(--radius);padding:.75rem 1rem;">
+      <div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Net profit</div>
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:${net>=0?'var(--gold)':'var(--crimson)'};">${fmtNet(net)}</div>
+    </div>
+    <div style="background:var(--surface3);border-radius:var(--radius);padding:.75rem 1rem;">
+      <div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Sharings</div>
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--white);">${pPct}% / ${dPct}%</div>
+    </div>`;
 }
