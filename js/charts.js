@@ -7,44 +7,50 @@ function renderMainChart(){
   const data = calcMonthData();
   const gc   = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
   const tc   = isLight ? '#888' : '#666';
-  let datasets, legendHTML, type = 'bar';
+  let datasets, legendHTML, type = 'line';
 
   if(currentChart === 'users'){
     datasets = [{
       label: 'Paying users',
       data: data.map(d => d.paying),
-      backgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.2)'),
-      borderRadius: 4
+      borderColor: '#BE1E2D',
+      backgroundColor: 'rgba(190,30,45,0.15)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: data.map((_,i) => i < 6 ? 5 : 3),
+      pointBackgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.4)'),
+      borderWidth: 2.5
     }];
     legendHTML = `
-      <div class="leg"><div class="leg-sq" style="background:#BE1E2D"></div>Peak months (1–3)</div>
-      <div class="leg"><div class="leg-sq" style="background:#D4AF37"></div>Decline (4–6)</div>
-      <div class="leg"><div class="leg-sq" style="background:rgba(245,245,245,0.2)"></div>Steady state (7–12)</div>`;
+      <div class="leg"><div class="leg-sq" style="background:#BE1E2D;border-radius:50%"></div>Peak (M1–3)</div>
+      <div class="leg"><div class="leg-sq" style="background:#D4AF37;border-radius:50%"></div>Decline (M4–6)</div>
+      <div class="leg"><div class="leg-sq" style="background:rgba(245,245,245,0.4);border-radius:50%"></div>Steady (M7–12)</div>`;
 
   } else if(currentChart === 'revenue'){
     datasets = [{
       label: 'Revenue',
       data: data.map(d => Math.round(d.revenue)),
-      backgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.2)'),
-      borderRadius: 4
+      borderColor: '#D4AF37',
+      backgroundColor: 'rgba(212,175,55,0.15)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: data.map((_,i) => i < 6 ? 5 : 3),
+      pointBackgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.4)'),
+      borderWidth: 2.5
     }];
     legendHTML = `
-      <div class="leg"><div class="leg-sq" style="background:#BE1E2D"></div>Peak revenue (1–3)</div>
-      <div class="leg"><div class="leg-sq" style="background:#D4AF37"></div>Declining (4–6)</div>
-      <div class="leg"><div class="leg-sq" style="background:rgba(245,245,245,0.2)"></div>Steady (7–12)</div>`;
+      <div class="leg"><div class="leg-sq" style="background:#D4AF37;border-radius:50%"></div>Monthly revenue</div>`;
 
   } else {
-    type = 'line';
-    const nd = data.map(d => Math.round(d.profit));
     datasets = [{
       label: 'Net profit',
-      data: nd,
+      data: data.map(d => Math.round(d.profit)),
       borderColor: '#BE1E2D',
       backgroundColor: 'rgba(190,30,45,0.12)',
       fill: true,
-      tension: 0.35,
+      tension: 0.4,
       pointRadius: 4,
-      pointBackgroundColor: nd.map(v => v >= 0 ? '#D4AF37' : '#BE1E2D'),
+      pointBackgroundColor: data.map(d => d.profit >= 0 ? '#D4AF37' : '#BE1E2D'),
       borderWidth: 2
     }];
     legendHTML = `<div class="leg"><div class="leg-sq" style="background:#BE1E2D;border-radius:50%"></div>Monthly net profit</div>`;
@@ -60,7 +66,7 @@ function renderMainChart(){
         legend: { display: false },
         tooltip: { callbacks: { label: c =>
           currentChart === 'users'
-            ? c.dataset.label + ': ' + Math.round(c.parsed.y).toLocaleString()
+            ? 'Paying users: ' + Math.round(c.parsed.y).toLocaleString()
             : (c.parsed.y >= 0 ? '+ ' : '− ') + 'RM ' + Math.round(Math.abs(c.parsed.y)).toLocaleString()
         }}
       },
@@ -184,7 +190,7 @@ function buildPayoutChart(){
       labels: [`Producer (${pPct}%)`, `Director (${dPct}%)`],
       datasets: [{
         data: [net * producerSplit, net * (1 - producerSplit)],
-        backgroundColor: ['rgba(212,175,55,0.85)','rgba(245,245,245,0.5)'],
+        backgroundColor: ['rgba(212,175,55,0.85)', 'rgba(245,245,245,0.5)'],
         borderWidth: 0
       }]
     },
@@ -199,10 +205,10 @@ function buildPayoutChart(){
 }
 
 function buildPayoutTable(){
-  const net    = netProfit();
+  const net     = netProfit();
   const insight = document.getElementById('producerInsight');
-  const pPct   = Math.round(producerSplit * 100);
-  const dPct   = Math.round((1 - producerSplit) * 100);
+  const pPct    = Math.round(producerSplit * 100);
+  const dPct    = Math.round((1 - producerSplit) * 100);
   if(net > 0){
     insight.innerHTML = `<div style="font-size:12px;color:var(--muted2);line-height:1.7;">
       With <strong style="color:var(--gold)">${fmt(net)}</strong> net profit:<br>
