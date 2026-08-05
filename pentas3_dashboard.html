@@ -76,30 +76,26 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 1.5: SETUP ══ -->
+<!-- ══ SCREEN 1.5: SETUP — greeting only ══ -->
 <div class="screen" id="screen-setup" style="align-items:center;justify-content:center;">
   <div class="calc-box" style="max-width:500px;">
     <div id="setupGreeting" style="display:none;text-align:center;margin-bottom:1.5rem;padding:1rem;background:var(--crimson);border-radius:var(--radius);">
       <div id="setupGreetingText" style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:#fff;"></div>
     </div>
     <div class="calc-header">
-      <div class="calc-step">Step 1 of 2 — Basic Setup</div>
-      <div class="calc-title">Episode Setup</div>
-      <div class="calc-sub">Set your paid episode count before configuring scenarios</div>
+      <div class="calc-step">Welcome to Pentas3</div>
+      <div class="calc-title">Financial Dashboard</div>
+      <div class="calc-sub">Configure your 3 budget scenarios to compare investment outcomes</div>
     </div>
-    <div class="calc-section-title">&#127916; Episode Structure <span class="free-tag">3 free + paid</span></div>
-    <div class="form-group">
-      <label class="form-label">Number of paid episodes</label>
-      <div class="spin-group">
-        <button class="spin-btn" onclick="spinGlobalEps(-1)" type="button">&#8722;</button>
-        <input class="spin-input" id="global-eps" type="number" min="0" max="17" value="0"/>
-        <button class="spin-btn" onclick="spinGlobalEps(1)" type="button">+</button>
+    <div style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;">
+      <div style="font-size:11px;color:var(--muted2);line-height:1.8;">
+        &#127916; <strong style="color:var(--white);">Episode structure:</strong> First 3 episodes are free · Episodes 4–17 (14 paid episodes) require payment<br>
+        &#128101; <strong style="color:var(--white);">Paying users:</strong> Users who unlock all 14 paid episodes<br>
+        &#128176; <strong style="color:var(--white);">Revenue:</strong> Paying users × price per episode × 14 paid episodes
       </div>
-      <div class="input-hint">First 3 episodes always free. Users pay to unlock from episode 4 onwards.</div>
     </div>
-    <div class="calc-divider"></div>
     <div style="display:flex;gap:10px;">
-      <button class="btn-primary" id="btn-setup-next" style="flex:3;">Next: Configure Scenarios &#8594;</button>
+      <button class="btn-primary" id="btn-setup-next" style="flex:3;">Configure Scenarios &#8594;</button>
     </div>
   </div>
 </div>
@@ -108,7 +104,7 @@
 <div class="screen" id="screen-calc">
   <div class="calc-box" style="max-width:620px;">
     <div class="calc-header">
-      <div class="calc-step">Step 2 of 2 — Configure Scenarios</div>
+      <div class="calc-step">Configure 3 Budget Scenarios</div>
       <div class="calc-title">Scenario Projections</div>
       <div class="calc-sub">Set peak paying users, price per episode and fixed costs for each scenario</div>
     </div>

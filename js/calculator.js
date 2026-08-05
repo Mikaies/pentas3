@@ -1,15 +1,9 @@
 /* ═══════════════════════════════════════════
    SETUP SCREEN
 ═══════════════════════════════════════════ */
-let globalEps = 17;
-
-function spinGlobalEps(delta){
-  globalEps = Math.min(17, Math.max(1, globalEps + delta));
-  document.getElementById('global-eps').value = globalEps;
-}
+const globalEps = 17;
 
 document.getElementById('btn-setup-next').addEventListener('click', ()=>{
-  globalEps = parseInt(document.getElementById('global-eps').value) || 17;
   showScreen('screen-calc');
 });
 
@@ -50,9 +44,9 @@ function updateTotalCostFor(sc){
 function readScenario(sc){
   return {
     label:      sc.charAt(0).toUpperCase() + sc.slice(1),
-    peakUsers:  parseInt(document.getElementById('inp-users-'+sc).value) || 1000,
+    peakUsers:  50000,
     price:      parseFloat(document.getElementById('inp-price-'+sc).value) || 0.30,
-    paidEps:    globalEps,
+    paidEps:    17,
     production: parseFloat(document.getElementById('inp-production-'+sc).value) || 0,
     management: parseFloat(document.getElementById('inp-management-'+sc).value) || 0,
     marketing:  parseFloat(document.getElementById('inp-marketing-'+sc).value) || 0,
@@ -72,7 +66,6 @@ document.getElementById('btn-calculate').addEventListener('click', ()=>{
     const net = netProfitFor(s);
     document.getElementById('ssum-price-'+sc).textContent  = 'RM '+s.price.toFixed(2)+'/ep';
     document.getElementById('ssum-eps-'+sc).textContent    = s.paidEps+' paid eps';
-    document.getElementById('ssum-dramas-'+sc).textContent = s.peakUsers.toLocaleString()+' peak users';
     document.getElementById('ssum-fixed-'+sc).textContent  = fmt(totalFixedFor(s));
     const netEl = document.getElementById('ssum-net-'+sc);
     netEl.textContent = fmtNet(net);
