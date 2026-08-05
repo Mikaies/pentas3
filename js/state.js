@@ -6,7 +6,7 @@ let userName = '';
 const DEFAULT_SCENARIOS = {
   min: {
     label: 'Minimum',
-    peakUsers: 1000,
+    peakUsers: 50000,
     price: 0.30,
     paidEps: 17,
     production: 8000,
@@ -15,7 +15,7 @@ const DEFAULT_SCENARIOS = {
   },
   decent: {
     label: 'Decent',
-    peakUsers: 5000,
+    peakUsers: 50000,
     price: 0.40,
     paidEps: 17,
     production: 15000,
@@ -24,7 +24,7 @@ const DEFAULT_SCENARIOS = {
   },
   max: {
     label: 'Maximum',
-    peakUsers: 15000,
+    peakUsers: 50000,
     price: 0.50,
     paidEps: 17,
     production: 30000,
@@ -50,18 +50,18 @@ let scCompareChartInst = null;
 let scBarChartInst = null;
 let isLight = false;
 let producerSplit = 0.80;
+let directorSplit = 0.20;
 let activeScenarioTab = 'min';
 let activeOverviewScenario = 'decent';
 
-// 12-month paying user curve
-// Month 1-3: peak, Month 4-6: declining, Month 7-12: flat very low
-const USER_CURVE = [1.0, 0.85, 0.65, 0.30, 0.15, 0.08, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03];
+// Bell curve: starts lower, peaks at M2-3, drops M4-6, flat very low M7-12
+const USER_CURVE = [0.40, 0.90, 1.00, 0.60, 0.30, 0.15, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05];
 
 const PHASES = [
-  'Launch Peak', 'Growth', 'Early Momentum',
-  'Post-Peak Drop', 'Settling Down', 'Low Baseline',
-  'Steady State', 'Steady State', 'Steady State',
-  'Steady State', 'Steady State', 'Steady State'
+  'Launch', 'Peak', 'Peak',
+  'Declining', 'Declining', 'Low',
+  'Steady', 'Steady', 'Steady',
+  'Steady', 'Steady', 'Steady'
 ];
 
 const MONTH_LABELS = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
@@ -103,7 +103,7 @@ function fmt(n){ return 'RM ' + Math.round(Math.abs(n)).toLocaleString(); }
 function fmtNet(n){ return (n >= 0 ? '+ ' : '− ') + 'RM ' + Math.round(Math.abs(n)).toLocaleString(); }
 
 function phaseStyle(p){
-  if(['Launch Peak','Growth','Early Momentum'].includes(p)) return 'badge-gold';
-  if(['Post-Peak Drop','Settling Down'].includes(p)) return 'badge-red';
+  if(['Peak','Launch'].includes(p)) return 'badge-gold';
+  if(['Declining','Low'].includes(p)) return 'badge-red';
   return 'badge-dim';
 }

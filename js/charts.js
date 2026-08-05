@@ -99,24 +99,7 @@ function showDetail(i){
    COST BREAKDOWN PAGE
 ═══════════════════════════════════════════ */
 function buildCostCards(){
-  const tf  = totalFixed();
-  const pct = x => tf > 0 ? ((x/tf)*100).toFixed(1) + '%' : '0%';
-  document.getElementById('costCards').innerHTML = `
-    <div class="sc-card-full" style="border:1px solid var(--border);">
-      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Production</div>
-      <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;">${fmt(cfg.production)}</div>
-      <div style="font-size:11px;color:var(--muted2);">${pct(cfg.production)} of total fixed cost</div>
-    </div>
-    <div class="sc-card-full" style="border:1px solid var(--border);">
-      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:8px;">Management</div>
-      <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;">${fmt(cfg.management)}</div>
-      <div style="font-size:11px;color:var(--muted2);">${pct(cfg.management)} of total fixed cost</div>
-    </div>
-    <div class="sc-card-full" style="border:1px solid var(--border);">
-      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0522d;margin-bottom:8px;">Marketing</div>
-      <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;">${fmt(cfg.marketing)}</div>
-      <div style="font-size:11px;color:var(--muted2);">${pct(cfg.marketing)} of total fixed cost</div>
-    </div>`;
+  // Cost cards removed — only chart shown
 }
 
 function buildCostChart(){
@@ -161,21 +144,30 @@ function renderPayoutAmounts(){
   const net = netProfit();
   if(net > 0){
     document.getElementById('po-producer').textContent = fmt(net * producerSplit);
-    document.getElementById('po-director').textContent = fmt(net * (1 - producerSplit));
+    document.getElementById('po-director').textContent = fmt(net * directorSplit);
   } else {
     ['po-producer','po-director'].forEach(id => document.getElementById(id).textContent = '—');
   }
 }
 
-function updatePayoutSplit(val){
+function updateProducerSplit(val){
   producerSplit = parseInt(val) / 100;
-  const dPct = Math.round((1 - producerSplit) * 100);
   document.getElementById('producer-pct-label').textContent = val + '%';
   document.getElementById('po-producer-pct').textContent    = val + '%';
-  document.getElementById('po-director-pct').textContent    = dPct + '%';
   renderPayoutAmounts();
   buildPayoutChart();
   buildPayoutTable();
+  buildCumulativeChart();
+}
+
+function updateDirectorSplit(val){
+  directorSplit = parseInt(val) / 100;
+  document.getElementById('director-pct-label').textContent = val + '%';
+  document.getElementById('po-director-pct').textContent    = val + '%';
+  renderPayoutAmounts();
+  buildPayoutChart();
+  buildPayoutTable();
+  buildCumulativeChart();
 }
 
 function buildPayoutChart(){
@@ -183,13 +175,13 @@ function buildPayoutChart(){
   const ctx  = document.getElementById('payoutChart').getContext('2d');
   const net  = Math.max(0, netProfit());
   const pPct = Math.round(producerSplit * 100);
-  const dPct = Math.round((1 - producerSplit) * 100);
+  const dPct = Math.round(directorSplit * 100);
   payoutChartInst = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: [`Producer (${pPct}%)`, `Director (${dPct}%)`],
       datasets: [{
-        data: [net * producerSplit, net * (1 - producerSplit)],
+        data: [net * producerSplit, net * directorSplit],
         backgroundColor: ['rgba(212,175,55,0.85)', 'rgba(245,245,245,0.5)'],
         borderWidth: 0
       }]
@@ -207,17 +199,17 @@ function buildPayoutChart(){
 function buildPayoutTable(){
   const net     = netProfit();
   const insight = document.getElementById('producerInsight');
-  const pPct    = Math.round(producerSplit * 100);
-  const dPct    = Math.round((1 - producerSplit) * 100);
+ const pPct    = Math.round(producerSplit * 100);
+  const dPct    = Math.round(directorSplit * 100);
   if(net > 0){
     insight.innerHTML = `<div style="font-size:12px;color:var(--muted2);line-height:1.7;">
       With <strong style="color:var(--gold)">${fmt(net)}</strong> net profit:<br>
       Producer earns <strong style="color:var(--gold)">${fmt(net*producerSplit)}</strong> ·
-      Director earns <strong style="color:var(--white)">${fmt(net*(1-producerSplit))}</strong>.
+      Director earns <strong style="color:var(--white)">${fmt(net*directorSplit)}</strong>.
     </div>`;
     document.getElementById('payoutDetailBody').innerHTML = `
       <tr><td>Producer</td><td>${pPct}%</td><td class="pos-val">${fmt(net*producerSplit)}</td><td>—</td></tr>
-      <tr><td>Director</td><td>${dPct}%</td><td>${fmt(net*(1-producerSplit))}</td><td>—</td></tr>`;
+      <tr><td>Director</td><td>${dPct}%</td><td>${fmt(net*directorSplit)}</td><td>—</td></tr>`; 
   } else {
     insight.innerHTML = `<div style="font-size:12px;color:var(--muted2);line-height:1.7;">
       Currently showing a loss of <strong style="color:var(--crimson)">${fmtNet(net)}</strong>. No payout until net profit is positive.
