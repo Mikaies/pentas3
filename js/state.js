@@ -44,10 +44,8 @@ let cfg = { ...scenarios.decent };
 
 let currentChart = 'users';
 let chartInst = null;
-let costChartInst = null;
 let payoutChartInst = null;
 let scCompareChartInst = null;
-let scBarChartInst = null;
 let isLight = false;
 let producerSplit = 0.80;
 let directorSplit = 0.20;

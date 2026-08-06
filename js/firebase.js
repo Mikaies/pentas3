@@ -66,6 +66,11 @@ async function updateUserPassword(newPassword, currentPassword){
   await auth.currentUser.updatePassword(newPassword);
 }
 
+// ── SEND PASSWORD RESET EMAIL ──
+async function sendPasswordReset(email){
+  await auth.sendPasswordResetEmail(email);
+}
+
 // ── UPDATE DISPLAY NAME IN FIRESTORE ──
 async function updateUserName(newName){
   await saveUserData(auth.currentUser.uid, { name: newName });

@@ -36,6 +36,10 @@
         <label class="form-label" for="inp-pass">Password</label>
         <input class="form-input" id="inp-pass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
         <div class="form-error" id="login-error"></div>
+        <div style="text-align:right;margin-top:6px;">
+          <a href="#" id="link-forgot-pass" style="font-size:11px;color:var(--muted2);text-decoration:underline;">Forgot your password?</a>
+        </div>
+        <div style="font-size:11px;margin-top:6px;color:var(--gold);display:none;" id="forgot-pass-msg"></div>
       </div>
       <button class="btn-primary" id="btn-login">Sign In</button>
     </div>
@@ -296,9 +300,6 @@
       <div class="nav-item" data-page="projections">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>12-Month Projections
       </div>
-      <div class="nav-item" data-page="costs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Cost Breakdown
-      </div>
       <div class="nav-item" data-page="payout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Payout Split
       </div>
@@ -358,11 +359,6 @@
         <div class="card">
           <div class="card-header">
             <div><div class="card-title">Monthly breakdown</div><div class="card-sub">12-month projection based on your configuration</div></div>
-            <div class="chart-tabs">
-              <button class="ctab active" data-chart="users">Paying users</button>
-              <button class="ctab" data-chart="revenue">Revenue</button>
-              <button class="ctab" data-chart="net">Net profit</button>
-            </div>
           </div>
           <div class="legend" style="margin-bottom:12px;" id="chartLegend"></div>
           <div style="position:relative;width:100%;height:260px;"><canvas id="mainChart"></canvas></div>
@@ -390,26 +386,6 @@
           <div class="table-wrap"><table><thead><tr>
             <th>Month</th><th>Phase</th><th>Paying users</th><th>Revenue</th><th>Monthly fixed</th><th>Net profit</th>
           </tr></thead><tbody id="projTableBody"></tbody></table></div>
-        </div>
-      </div>
-
-      <!-- COSTS -->
-      <div class="page" id="page-costs">
-        <div class="page-header">
-          <div class="page-title">Cost Breakdown</div>
-          <div class="page-sub">Your custom cost structure and how it affects profitability</div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Revenue vs costs overview</div></div>
-          <div style="position:relative;width:100%;height:260px;"><canvas id="costChart"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Pricing rationale</div></div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
-            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.30 baseline</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">Clears payment gateway fees. Avoids cheap content perception while keeping friction low.</div></div>
-            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.40 moderate</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 6.80 total stays well under a fast-food meal. Psychological sweetspot between accessible and premium.</div></div>
-            <div style="padding:1rem;background:var(--surface2);border-radius:var(--radius);"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">RM 0.50 maximum</div><div style="font-size:12px;color:var(--muted2);line-height:1.6;">RM 8.50 total sits safely below the RM 16.90/month iQIYI subscription.</div></div>
-          </div>
         </div>
       </div>
 
@@ -478,10 +454,6 @@
           </div>
           <div style="display:flex;gap:16px;margin-bottom:12px;" id="scCompareLegend"></div>
           <div style="position:relative;width:100%;height:300px;"><canvas id="scCompareChart"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Revenue vs investment comparison</div></div>
-          <div style="position:relative;width:100%;height:260px;"><canvas id="scBarChart"></canvas></div>
         </div>
         <div class="card" id="scPredictionCard">
           <div class="card-header"><div class="card-title">&#127775; Best outcome prediction</div></div>

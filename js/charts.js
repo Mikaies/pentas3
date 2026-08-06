@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   MAIN CHART — 3 tabs: users / revenue / profit
+   MAIN CHART — Monthly breakdown (paying users)
 ═══════════════════════════════════════════ */
 function renderMainChart(){
   if(chartInst){ chartInst.destroy(); chartInst=null; }
@@ -7,74 +7,36 @@ function renderMainChart(){
   const data = calcMonthData();
   const gc   = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
   const tc   = isLight ? '#888' : '#666';
-  let datasets, legendHTML, type = 'line';
 
-  if(currentChart === 'users'){
-    datasets = [{
-      label: 'Paying users',
-      data: data.map(d => d.paying),
-      borderColor: '#BE1E2D',
-      backgroundColor: 'rgba(190,30,45,0.15)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: data.map((_,i) => i < 6 ? 5 : 3),
-      pointBackgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.4)'),
-      borderWidth: 2.5
-    }];
-    legendHTML = `
-      <div class="leg"><div class="leg-sq" style="background:#BE1E2D;border-radius:50%"></div>Peak (M1–3)</div>
-      <div class="leg"><div class="leg-sq" style="background:#D4AF37;border-radius:50%"></div>Decline (M4–6)</div>
-      <div class="leg"><div class="leg-sq" style="background:rgba(245,245,245,0.4);border-radius:50%"></div>Steady (M7–12)</div>`;
-
-  } else if(currentChart === 'revenue'){
-    datasets = [{
-      label: 'Revenue',
-      data: data.map(d => Math.round(d.revenue)),
-      borderColor: '#D4AF37',
-      backgroundColor: 'rgba(212,175,55,0.15)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: data.map((_,i) => i < 6 ? 5 : 3),
-      pointBackgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.4)'),
-      borderWidth: 2.5
-    }];
-    legendHTML = `
-      <div class="leg"><div class="leg-sq" style="background:#D4AF37;border-radius:50%"></div>Monthly revenue</div>`;
-
-  } else {
-    datasets = [{
-      label: 'Net profit',
-      data: data.map(d => Math.round(d.profit)),
-      borderColor: '#BE1E2D',
-      backgroundColor: 'rgba(190,30,45,0.12)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 4,
-      pointBackgroundColor: data.map(d => d.profit >= 0 ? '#D4AF37' : '#BE1E2D'),
-      borderWidth: 2
-    }];
-    legendHTML = `<div class="leg"><div class="leg-sq" style="background:#BE1E2D;border-radius:50%"></div>Monthly net profit</div>`;
-  }
+  const datasets = [{
+    label: 'Paying users',
+    data: data.map(d => d.paying),
+    borderColor: '#BE1E2D',
+    backgroundColor: 'rgba(190,30,45,0.15)',
+    fill: true,
+    tension: 0.4,
+    pointRadius: data.map((_,i) => i < 6 ? 5 : 3),
+    pointBackgroundColor: data.map((_,i) => i < 3 ? '#BE1E2D' : i < 6 ? '#D4AF37' : 'rgba(245,245,245,0.4)'),
+    borderWidth: 2.5
+  }];
+  const legendHTML = `
+    <div class="leg"><div class="leg-sq" style="background:#BE1E2D;border-radius:50%"></div>Peak (M1–3)</div>
+    <div class="leg"><div class="leg-sq" style="background:#D4AF37;border-radius:50%"></div>Decline (M4–6)</div>
+    <div class="leg"><div class="leg-sq" style="background:rgba(245,245,245,0.4);border-radius:50%"></div>Steady (M7–12)</div>`;
 
   document.getElementById('chartLegend').innerHTML = legendHTML;
   chartInst = new Chart(ctx, {
-    type,
+    type: 'line',
     data: { labels: MONTH_LABELS, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: c =>
-          currentChart === 'users'
-            ? 'Paying users: ' + Math.round(c.parsed.y).toLocaleString()
-            : (c.parsed.y >= 0 ? '+ ' : '− ') + 'RM ' + Math.round(Math.abs(c.parsed.y)).toLocaleString()
-        }}
+        tooltip: { callbacks: { label: c => 'Paying users: ' + Math.round(c.parsed.y).toLocaleString() } }
       },
       scales: {
         x: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 } } },
-        y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 },
-          callback: v => currentChart === 'users' ? v.toLocaleString() : 'RM ' + Math.abs(v).toLocaleString()
-        }}
+        y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 }, callback: v => v.toLocaleString() } }
       }
     }
   });
@@ -96,48 +58,6 @@ function showDetail(i){
 }
 
 /* ═══════════════════════════════════════════
-   COST BREAKDOWN PAGE
-═══════════════════════════════════════════ */
-function buildCostCards(){
-  // Cost cards removed — only chart shown
-}
-
-function buildCostChart(){
-  if(costChartInst){ costChartInst.destroy(); costChartInst=null; }
-  const ctx = document.getElementById('costChart').getContext('2d');
-  const rev = totalRevenue();
-  const net = netProfit();
-  costChartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Total Revenue','Production','Management','Marketing','Net Profit'],
-      datasets: [{
-        data: [Math.round(rev), cfg.production, cfg.management, cfg.marketing, Math.round(Math.abs(net))],
-        backgroundColor: [
-          'rgba(212,175,55,0.8)',
-          'rgba(190,30,45,0.7)',
-          'rgba(143,21,32,0.7)',
-          'rgba(160,82,45,0.7)',
-          net >= 0 ? 'rgba(212,175,55,0.9)' : 'rgba(190,30,45,0.5)'
-        ],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: c => 'RM ' + Math.round(c.parsed.y).toLocaleString() } }
-      },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font: { size: 11 }, callback: v => 'RM ' + v.toLocaleString() } }
-      }
-    }
-  });
-}
-
-/* ═══════════════════════════════════════════
    PAYOUT PAGE
 ═══════════════════════════════════════════ */
 function renderPayoutAmounts(){
@@ -151,9 +71,17 @@ function renderPayoutAmounts(){
 }
 
 function updateProducerSplit(val){
-  producerSplit = parseInt(val) / 100;
-  document.getElementById('producer-pct-label').textContent = val + '%';
-  document.getElementById('po-producer-pct').textContent    = val + '%';
+  const pVal = parseInt(val);
+  const dVal = 100 - pVal;
+  producerSplit = pVal / 100;
+  directorSplit = dVal / 100;
+
+  document.getElementById('producer-pct-label').textContent = pVal + '%';
+  document.getElementById('po-producer-pct').textContent    = pVal + '%';
+  document.getElementById('director-pct-label').textContent = dVal + '%';
+  document.getElementById('po-director-pct').textContent    = dVal + '%';
+  document.getElementById('director-split-slider').value    = dVal;
+
   renderPayoutAmounts();
   buildPayoutChart();
   buildPayoutTable();
@@ -161,9 +89,17 @@ function updateProducerSplit(val){
 }
 
 function updateDirectorSplit(val){
-  directorSplit = parseInt(val) / 100;
-  document.getElementById('director-pct-label').textContent = val + '%';
-  document.getElementById('po-director-pct').textContent    = val + '%';
+  const dVal = parseInt(val);
+  const pVal = 100 - dVal;
+  directorSplit = dVal / 100;
+  producerSplit = pVal / 100;
+
+  document.getElementById('director-pct-label').textContent = dVal + '%';
+  document.getElementById('po-director-pct').textContent    = dVal + '%';
+  document.getElementById('producer-pct-label').textContent = pVal + '%';
+  document.getElementById('po-producer-pct').textContent    = pVal + '%';
+  document.getElementById('producer-split-slider').value    = pVal;
+
   renderPayoutAmounts();
   buildPayoutChart();
   buildPayoutTable();

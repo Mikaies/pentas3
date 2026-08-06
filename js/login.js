@@ -73,7 +73,39 @@ document.addEventListener('DOMContentLoaded', ()=>{
       showScreen('screen-setup');
       ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
     } catch(e){
-      err.textContent = 'Incorrect email or password. Please try again.';
+      let msg = 'Incorrect email or password. Please try again.';
+      if(e.code === 'auth/user-not-found') msg = 'No account found with that email.';
+      else if(e.code === 'auth/wrong-password') msg = 'Incorrect password. Please try again.';
+      else if(e.code === 'auth/invalid-email') msg = 'That email address looks invalid.';
+      else if(e.code === 'auth/too-many-requests') msg = 'Too many attempts. Please wait a moment and try again.';
+      else if(e.code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
+      console.warn('Login error code:', e.code, e.message);
+      err.textContent = msg;
+      err.classList.add('show');
+    }
+  });
+
+  /* ── FORGOT PASSWORD ── */
+  document.getElementById('link-forgot-pass').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const email = document.getElementById('inp-email').value.trim();
+    const msgEl = document.getElementById('forgot-pass-msg');
+    const err = document.getElementById('login-error');
+    err.textContent = ''; err.classList.remove('show');
+    if(!email){
+      err.textContent = 'Enter your email above first, then click "Forgot your password?".';
+      err.classList.add('show');
+      return;
+    }
+    try {
+      await sendPasswordReset(email);
+      msgEl.textContent = `Password reset link sent to ${email}. Check your inbox (and spam folder).`;
+      msgEl.style.display = 'block';
+    } catch(e){
+      let msg = 'Could not send reset email. Please try again.';
+      if(e.code === 'auth/user-not-found') msg = 'No account found with that email.';
+      else if(e.code === 'auth/invalid-email') msg = 'That email address looks invalid.';
+      err.textContent = msg;
       err.classList.add('show');
     }
   });

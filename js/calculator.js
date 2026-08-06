@@ -106,15 +106,6 @@ document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
   });
 });
 
-document.querySelectorAll('.ctab[data-chart]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    currentChart = el.dataset.chart;
-    renderMainChart();
-  });
-});
-
 /* ═══════════════════════════════════════════
    MOBILE MENU
 ═══════════════════════════════════════════ */
@@ -138,7 +129,7 @@ function preparePrint(){
     ${scenarioName} scenario · ${(cfg.peakUsers||0).toLocaleString()} peak users · RM ${(cfg.price||0.40).toFixed(2)}/ep · ${cfg.paidEps||17} paid eps
   `;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('print-active'));
-  ['page-overview','page-projections','page-costs','page-payout','page-scenarios'].forEach(id=>{
+  ['page-overview','page-projections','page-payout','page-scenarios'].forEach(id=>{
     document.getElementById(id).classList.add('print-active');
   });
   document.querySelectorAll('.page').forEach(p => { p.style.display = 'block'; });
@@ -163,8 +154,6 @@ document.getElementById('btn-print-pdf').addEventListener('click', e=>{
   preparePrint();
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      buildCostCards();
-      buildCostChart();
       renderPayoutAmounts();
       buildPayoutChart();
       buildPayoutTable();

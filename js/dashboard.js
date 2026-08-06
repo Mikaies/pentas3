@@ -120,8 +120,6 @@ function buildDashboard(){
   renderBreakEven();
   renderTable();
   renderMainChart();
-  buildCostCards();
-  buildCostChart();
   renderPayoutAmounts();
   buildPayoutChart();
   buildPayoutTable();
@@ -141,8 +139,6 @@ document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
       renderBreakEven();
       renderTable();
       renderMainChart();
-      buildCostCards();
-      buildCostChart();
       renderPayoutAmounts();
       buildPayoutChart();
       buildPayoutTable();
@@ -172,18 +168,21 @@ function buildConfigBanner(){
    7 KPI CARDS
 ═══════════════════════════════════════════ */
 function renderOverviewMetrics(){
-  const data    = calcMonthData();
-  const tPaying = data.reduce((a,d) => a + d.paying, 0);
-  const tRev    = data.reduce((a,d) => a + d.revenue, 0);
-  const net     = netProfit();
-  const prodPay = net > 0 ? net * producerSplit : 0;
-  const dirPay  = net > 0 ? net * (1 - producerSplit) : 0;
+  const data     = calcMonthData();
+  const tPaying  = data.reduce((a,d) => a + d.paying, 0);
+  const tRev     = data.reduce((a,d) => a + d.revenue, 0);
+  const net      = netProfit();
+
+  // Find the actual peak month (highest paying users), rather than assuming Month 1
+  let peakIdx = 0;
+  data.forEach((d,i) => { if(d.paying > data[peakIdx].paying) peakIdx = i; });
+  const peakVal = data[peakIdx].paying;
 
   document.getElementById('overviewMetrics').innerHTML = `
     <div class="metric-card">
       <div class="metric-label">Peak paying users</div>
-      <div class="metric-val">${(cfg.peakUsers||0).toLocaleString()}</div>
-      <div class="metric-note">Month 1 — highest point</div>
+      <div class="metric-val">${peakVal.toLocaleString()}</div>
+      <div class="metric-note">Month ${peakIdx+1} — highest point</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">Total paying users (12mo)</div>
@@ -204,16 +203,6 @@ function renderOverviewMetrics(){
       <div class="metric-label">Net profit</div>
       <div class="metric-val ${net>=0?'pos':'neg'}">${fmtNet(net)}</div>
       <div class="metric-note">Revenue minus all fixed costs</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Producer payout (${Math.round(producerSplit*100)}%)</div>
-      <div class="metric-val ${net>0?'pos':'neg'}">${net>0?fmt(prodPay):'—'}</div>
-      <div class="metric-note">From net profit</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Director payout (${Math.round((1-producerSplit)*100)}%)</div>
-      <div class="metric-val ${net>0?'pos':'neg'}">${net>0?fmt(dirPay):'—'}</div>
-      <div class="metric-note">From net profit</div>
     </div>`;
 }
 
