@@ -73,13 +73,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       showScreen('screen-setup');
       ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
     } catch(e){
-      let msg = 'Incorrect email or password. Please try again.';
+      console.warn('Login error code:', e.code, e.message);
+      let msg;
       if(e.code === 'auth/user-not-found') msg = 'No account found with that email.';
       else if(e.code === 'auth/wrong-password') msg = 'Incorrect password. Please try again.';
       else if(e.code === 'auth/invalid-email') msg = 'That email address looks invalid.';
       else if(e.code === 'auth/too-many-requests') msg = 'Too many attempts. Please wait a moment and try again.';
       else if(e.code === 'auth/network-request-failed') msg = 'Network error. Check your connection and try again.';
-      console.warn('Login error code:', e.code, e.message);
+      else if(e.code === 'auth/invalid-credential' || e.code === 'auth/invalid-login-credentials') msg = 'Incorrect email or password. Please try again.';
+      else msg = `Sign-in succeeded but something else went wrong: ${e.message}`;
       err.textContent = msg;
       err.classList.add('show');
     }
