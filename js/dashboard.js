@@ -133,7 +133,7 @@ document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
       activeOverviewScenario = sc;
       cfg = { ...scenarios[sc] };
       document.querySelectorAll('.sc-switch-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll(`.sc-switch-btn[data-sc="${sc}"]`).forEach(b => b.classList.add('active'));
       renderOverviewMetrics();
       buildConfigBanner();
       renderBreakEven();
@@ -179,11 +179,6 @@ function renderOverviewMetrics(){
   const peakVal = data[peakIdx].paying;
 
   document.getElementById('overviewMetrics').innerHTML = `
-    <div class="metric-card">
-      <div class="metric-label">Peak paying users</div>
-      <div class="metric-val">${peakVal.toLocaleString()}</div>
-      <div class="metric-note">Month ${peakIdx+1} — highest point</div>
-    </div>
     <div class="metric-card">
       <div class="metric-label">Total paying users (12mo)</div>
       <div class="metric-val">${tPaying.toLocaleString()}</div>

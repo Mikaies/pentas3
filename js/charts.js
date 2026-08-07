@@ -71,15 +71,18 @@ function renderPayoutAmounts(){
 }
 
 function updateProducerSplit(val){
-  const pVal = parseInt(val);
+  let pVal = Math.round(parseFloat(val));
+  if(isNaN(pVal)) pVal = Math.round(producerSplit*100);
+  pVal = Math.min(95, Math.max(10, pVal));
   const dVal = 100 - pVal;
   producerSplit = pVal / 100;
   directorSplit = dVal / 100;
 
-  document.getElementById('producer-pct-label').textContent = pVal + '%';
+  document.getElementById('producer-pct-input').value       = pVal;
   document.getElementById('po-producer-pct').textContent    = pVal + '%';
-  document.getElementById('director-pct-label').textContent = dVal + '%';
+  document.getElementById('director-pct-input').value       = dVal;
   document.getElementById('po-director-pct').textContent    = dVal + '%';
+  document.getElementById('producer-split-slider').value    = pVal;
   document.getElementById('director-split-slider').value    = dVal;
 
   renderPayoutAmounts();
@@ -89,15 +92,18 @@ function updateProducerSplit(val){
 }
 
 function updateDirectorSplit(val){
-  const dVal = parseInt(val);
+  let dVal = Math.round(parseFloat(val));
+  if(isNaN(dVal)) dVal = Math.round(directorSplit*100);
+  dVal = Math.min(90, Math.max(5, dVal));
   const pVal = 100 - dVal;
   directorSplit = dVal / 100;
   producerSplit = pVal / 100;
 
-  document.getElementById('director-pct-label').textContent = dVal + '%';
+  document.getElementById('director-pct-input').value       = dVal;
   document.getElementById('po-director-pct').textContent    = dVal + '%';
-  document.getElementById('producer-pct-label').textContent = pVal + '%';
+  document.getElementById('producer-pct-input').value       = pVal;
   document.getElementById('po-producer-pct').textContent    = pVal + '%';
+  document.getElementById('director-split-slider').value    = dVal;
   document.getElementById('producer-split-slider').value    = pVal;
 
   renderPayoutAmounts();

@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   /* ── ADMIN BYPASS ── */
   const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
   if(isAdmin){
+    // Admin is not a real account — sign out any lingering session so it
+    // never inherits another user's saved history/data.
+    auth.signOut().catch(()=>{});
     showScreen('screen-admin');
     // Hide sign out button for admin
     const logoutBtn = document.getElementById('btn-logout');

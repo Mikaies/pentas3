@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════
    SETUP SCREEN
 ═══════════════════════════════════════════ */
-const globalEps = 17;
+let globalEps = 17;
 
 document.getElementById('btn-setup-next').addEventListener('click', ()=>{
   showScreen('screen-calc');

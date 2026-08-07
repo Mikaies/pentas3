@@ -397,10 +397,20 @@
         </div>
 <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-header"><div class="card-title">Adjust payout split</div></div>
+          <div class="scenario-switcher" id="payoutScenarioSwitcher" style="margin-bottom:1rem;">
+            <button class="sc-switch-btn min" data-sc="min" id="payout-switch-min">&#127807; Minimum</button>
+            <button class="sc-switch-btn decent active" data-sc="decent" id="payout-switch-decent">&#9878;&#65039; Decent</button>
+            <button class="sc-switch-btn max" data-sc="max" id="payout-switch-max">&#128640; Maximum</button>
+          </div>
           <div style="padding:.5rem 0;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <span style="font-size:12px;color:var(--muted2);">Producer share</span>
-              <span style="font-size:14px;font-weight:700;color:var(--gold);" id="producer-pct-label">80%</span>
+              <span style="display:flex;align-items:center;gap:2px;">
+                <input type="number" id="producer-pct-input" min="10" max="95" step="1" value="80"
+                  style="width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:14px;text-align:right;padding:2px 4px;"
+                  onchange="updateProducerSplit(this.value)"/>
+                <span style="font-size:14px;font-weight:700;color:var(--gold);">%</span>
+              </span>
             </div>
             <input type="range" id="producer-split-slider" min="10" max="95" value="80" step="5"
               style="width:100%;accent-color:var(--gold);"
@@ -412,7 +422,12 @@
             <div style="margin-top:1.25rem;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                 <span style="font-size:12px;color:var(--muted2);">Director share</span>
-                <span style="font-size:14px;font-weight:700;color:var(--white);" id="director-pct-label">20%</span>
+                <span style="display:flex;align-items:center;gap:2px;">
+                  <input type="number" id="director-pct-input" min="5" max="90" step="1" value="20"
+                    style="width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--white);font-weight:700;font-size:14px;text-align:right;padding:2px 4px;"
+                    onchange="updateDirectorSplit(this.value)"/>
+                  <span style="font-size:14px;font-weight:700;color:var(--white);">%</span>
+                </span>
               </div>
               <input type="range" id="director-split-slider" min="5" max="90" value="20" step="5"
                 style="width:100%;accent-color:var(--white);"
