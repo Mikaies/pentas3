@@ -184,8 +184,15 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
   }
 
   .page { display: none !important; }
-  .page.print-active { display: block !important; page-break-after: always; }
-  .page.print-active:last-of-type { page-break-after: auto; }
+  .page.print-active { display: block !important; }
+  /* No forced break between sections — content now flows continuously,
+     only starting a new printed page when it naturally runs out of room.
+     This avoids the big blank gaps you saw when a section was short. */
+  .page.print-active + .page.print-active {
+    border-top: 1px dashed #eee;
+    padding-top: 14px;
+    margin-top: 14px;
+  }
 
   /* PAGE TITLES */
   .page-title{color:#BE1E2D !important;border-bottom:2px solid #D4AF37;padding-bottom:6px;margin-bottom:10px;font-size:14px;}
@@ -197,7 +204,7 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
   .card-sub{color:#555 !important;}
 
   /* METRIC CARDS */
-  .metric-card { border: 0.5px solid #ddd !important; background: #fafafa !important; padding: 8px; }
+  .metric-card { border: 0.5px solid #ddd !important; background: #fafafa !important; padding: 8px; page-break-inside: avoid; }
   .metric-card.gold-accent { border-color: #D4AF37 !important; background: #fdfaf0 !important; }
   .metric-card.red-accent { border-color: #BE1E2D !important; background: #fdf0f0 !important; }
   .metric-val { color: #1a1a1a !important; font-size: 16px; }
@@ -250,7 +257,7 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
 
   /* PAYOUT */
   .payout-grid { grid-template-columns: repeat(3,1fr) !important; }
-  .payout-card { border: 0.5px solid #ddd !important; background: #fafafa !important; opacity: 1 !important; }
+  .payout-card { border: 0.5px solid #ddd !important; background: #fafafa !important; opacity: 1 !important; page-break-inside: avoid; }
   .payout-role { color: #555 !important; }
   .payout-pct { color: #1a1a1a !important; -webkit-print-color-adjust: exact; }
   .payout-pct.gold { color: #B8860B !important; -webkit-print-color-adjust: exact; }
@@ -260,7 +267,7 @@ tbody tr:last-child td{border-bottom:none;font-weight:600;}
 
   /* CHARTS — convert to image for printing */
   canvas { display: none !important; }
-  .print-chart-img { display: block !important; width: 100% !important; max-height: 200px !important; object-fit: contain; -webkit-print-color-adjust: exact; }
+  .print-chart-img { display: block !important; width: 100% !important; max-height: 200px !important; object-fit: contain; -webkit-print-color-adjust: exact; page-break-inside: avoid; }
 
   .sc-summary-grid, .summary-grid, .btn-row, .scenario-tabs { display: none !important; }
 }
