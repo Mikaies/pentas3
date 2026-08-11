@@ -398,8 +398,8 @@
 <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-header"><div class="card-title">Adjust payout split</div></div>
           <div class="scenario-switcher" id="payoutScenarioSwitcher" style="margin-bottom:1rem;">
-            <button class="sc-switch-btn min" data-sc="min" id="payout-switch-min">&#127807; Minimum</button>
-            <button class="sc-switch-btn decent active" data-sc="decent" id="payout-switch-decent">&#9878;&#65039; Decent</button>
+            <button class="sc-switch-btn min active" data-sc="min" id="payout-switch-min">&#127807; Minimum</button>
+            <button class="sc-switch-btn decent" data-sc="decent" id="payout-switch-decent">&#9878;&#65039; Decent</button>
             <button class="sc-switch-btn max" data-sc="max" id="payout-switch-max">&#128640; Maximum</button>
           </div>
           <div style="padding:.5rem 0;">
@@ -493,6 +493,14 @@
         <div class="page-header">
           <div class="page-title">Saved History</div>
           <div class="page-sub">Your past dashboard configurations — click Restore to reload any entry</div>
+        </div>
+        <div id="historyBulkBar" style="display:none;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;">
+          <span style="font-size:12px;color:var(--muted2);"><span id="historySelectedCount">0</span> selected</span>
+          <div style="display:flex;gap:8px;">
+            <button class="icon-btn" onclick="histSelectAll()">Select all</button>
+            <button class="icon-btn" onclick="histClearSelection()">Clear</button>
+            <button class="icon-btn" style="color:var(--crimson);" onclick="histDeleteSelected()">🗑️ Delete selected</button>
+          </div>
         </div>
         <div id="historyList">
           <div style="text-align:center;padding:3rem;color:var(--muted);">

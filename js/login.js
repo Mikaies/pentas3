@@ -17,12 +17,14 @@ function switchAuthTab(tab){
 function showGreeting(name){
   const greeting = getGreeting();
 
+  // Topbar red pill
   const pill = document.getElementById('topbarUserName');
   if(pill){
     pill.textContent = `${greeting}, ${name}!`;
     pill.style.display = '';
   }
 
+  // Setup screen greeting
   const setupGreeting = document.getElementById('setupGreeting');
   const setupGreetingText = document.getElementById('setupGreetingText');
   if(setupGreeting && setupGreetingText){
@@ -33,14 +35,18 @@ function showGreeting(name){
 
 document.addEventListener('DOMContentLoaded', ()=>{
 
+  // Wire up tabs
   document.getElementById('tab-signin').addEventListener('click', ()=>switchAuthTab('signin'));
   document.getElementById('tab-register').addEventListener('click', ()=>switchAuthTab('register'));
 
   /* ── ADMIN BYPASS ── */
   const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
   if(isAdmin){
+    // Admin is not a real account — sign out any lingering session so it
+    // never inherits another user's saved history/data.
     auth.signOut().catch(()=>{});
     showScreen('screen-admin');
+    // Hide sign out button for admin
     const logoutBtn = document.getElementById('btn-logout');
     if(logoutBtn) logoutBtn.style.display = 'none';
   }
@@ -121,7 +127,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await saveUserData(cred.user.uid, { name, email });
       userName = name;
-      showGreeting(userName);
+     showGreeting(userName);
       showScreen('screen-setup');
       ['min','decent','max'].forEach(sc=>{ updateTotalCostFor(sc); });
     } catch(e){
@@ -130,7 +136,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  /* ── SIGN OUT ── */
+/* ── SIGN OUT ── */
   document.getElementById('btn-logout').addEventListener('click', async ()=>{
     if(isAdmin) return;
     await auth.signOut();
@@ -139,6 +145,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     globalEps = 4;
     const pill = document.getElementById('topbarUserName');
     if(pill){ pill.style.display = 'none'; }
+    // Clear all fields and reset to sign in tab
     document.getElementById('inp-email').value = '';
     document.getElementById('inp-pass').value = '';
     document.getElementById('inp-reg-name').value = '';
@@ -152,7 +159,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     showScreen('screen-login');
   });
 
-  /* ── PROFILE MODAL ── */
+/* ── PROFILE MODAL ── */
   document.getElementById('btn-profile').addEventListener('click', ()=>{
     document.getElementById('inp-profile-name').value = userName || '';
     document.getElementById('inp-profile-email').value = auth.currentUser ? auth.currentUser.email : '';
@@ -185,11 +192,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     let messages = [];
 
     try {
+      // Update name
       await updateUserName(newName);
       userName = newName;
       showGreeting(userName);
       messages.push('Name updated');
 
+      // Update email if changed
       if(emailChanged){
         if(!currPass){ errEl.textContent = 'Please enter your current password to change email.'; errEl.classList.add('show'); return; }
         try {
@@ -206,6 +215,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
       }
 
+      // Update password if filled
       if(passwordChanged){
         if(newPass.length < 6){ errEl.textContent = 'New password must be at least 6 characters.'; errEl.classList.add('show'); return; }
         if(!currPass2){ errEl.textContent = 'Please enter your current password to change password.'; errEl.classList.add('show'); return; }
@@ -230,22 +240,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  /* ── START OVER ── */
-  document.getElementById('btn-start-over').addEventListener('click',()=>{
+/* ── START OVER ── */
+document.getElementById('btn-start-over').addEventListener('click',()=>{
     globalEps = 0;
     document.getElementById('global-eps').value = globalEps;
     resetScenariosToDefault();
     showScreen('screen-setup');
   });
 
-  /* ── AUTO SAVE when entering dashboard ── */
+/* ── AUTO SAVE when entering dashboard ── */
   document.getElementById('btn-enter-dash').addEventListener('click', async ()=>{
     cfg = { ...scenarios.decent };
     buildDashboard();
     showScreen('screen-dashboard');
     if(auth.currentUser){
       const netProfit = netProfitFor(scenarios.decent);
-      await saveUserData(auth.currentUser.uid, {
+       await saveUserData(auth.currentUser.uid, {
         scenarios,
         globalEps,
       });

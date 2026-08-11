@@ -37,20 +37,29 @@ let scenarios = JSON.parse(JSON.stringify(DEFAULT_SCENARIOS));
 
 function resetScenariosToDefault(){
   scenarios = JSON.parse(JSON.stringify(DEFAULT_SCENARIOS));
-  cfg = { ...scenarios.decent };
+  cfg = { ...scenarios.min };
 }
 
-let cfg = { ...scenarios.decent };
+let cfg = { ...scenarios.min };
 
 let currentChart = 'users';
 let chartInst = null;
 let payoutChartInst = null;
 let scCompareChartInst = null;
 let isLight = false;
-let producerSplit = 0.80;
-let directorSplit = 0.20;
+// Payout split is stored PER scenario so Minimum/Decent/Maximum can each
+// have their own producer/director split instead of sharing one value.
+let payoutSplits = {
+  min:    { producer: 0.50, director: 0.50 },
+  decent: { producer: 0.50, director: 0.50 },
+  max:    { producer: 0.50, director: 0.50 }
+};
+// These two always mirror payoutSplits[activeOverviewScenario] — kept as
+// separate variables so existing render functions don't need a scenario arg.
+let producerSplit = payoutSplits.min.producer;
+let directorSplit = payoutSplits.min.director;
 let activeScenarioTab = 'min';
-let activeOverviewScenario = 'decent';
+let activeOverviewScenario = 'min';
 
 // Bell curve: starts lower, peaks at M2-3, drops M4-6, flat very low M7-12
 const USER_CURVE = [0.40, 0.90, 1.00, 0.60, 0.30, 0.15, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05];

@@ -82,8 +82,8 @@ function buildScenariosPage(){
     ['Total revenue',    ...scKeys.map(sc => fmt(totalRevenueFor(scenarios[sc])))],
     ['Net profit',       ...scKeys.map(sc => { const n=netProfitFor(scenarios[sc]); return `<span class="${n>=0?'pos-val':'neg-val'}">${fmtNet(n)}</span>`; })],
     ['ROI on fixed cost',...scKeys.map(sc => { const n=netProfitFor(scenarios[sc]); const f=totalFixedFor(scenarios[sc]); const r=f>0?(n/f*100):0; return `<span class="${r>=0?'pos-val':'neg-val'}">${r.toFixed(0)}%</span>`; })],
-    ['Producer payout',  ...scKeys.map(sc => { const n=Math.max(0,netProfitFor(scenarios[sc])); return n>0?`<span class="pos-val">${fmt(n*producerSplit)}</span>`:'—'; })],
-    ['Director payout',  ...scKeys.map(sc => { const n=Math.max(0,netProfitFor(scenarios[sc])); return n>0?`<span class="pos-val">${fmt(n*(1-producerSplit))}</span>`:'—'; })],
+    ['Producer payout',  ...scKeys.map(sc => { const n=Math.max(0,netProfitFor(scenarios[sc])); const s=(payoutSplits[sc]||{producer:0.5}).producer; return n>0?`<span class="pos-val">${fmt(n*s)}</span>`:'—'; })],
+    ['Director payout',  ...scKeys.map(sc => { const n=Math.max(0,netProfitFor(scenarios[sc])); const s=(payoutSplits[sc]||{director:0.5}).director; return n>0?`<span class="pos-val">${fmt(n*s)}</span>`:'—'; })],
   ].map(row => `<tr>${row.map((c,i) => i===0
     ? `<td style="font-weight:500;color:var(--muted2)">${c}</td>`
     : `<td>${c}</td>`).join('')}</tr>`).join('');
@@ -146,7 +146,7 @@ function buildScenarioPrediction(){
           </div>
           <div style="background:var(--surface2);border-radius:var(--radius);padding:8px 14px;">
             <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Producer payout</div>
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--gold)">${nets[best]>0?fmt(nets[best]*producerSplit):'—'}</div>
+            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--gold)">${nets[best]>0?fmt(nets[best]*((payoutSplits[best]||{producer:0.5}).producer)):'—'}</div>
           </div>
         </div>
       </div>

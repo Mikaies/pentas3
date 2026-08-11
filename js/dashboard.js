@@ -1,5 +1,8 @@
 async function buildHistoryPage(){
   const listEl = document.getElementById('historyList');
+  const bulkBar = document.getElementById('historyBulkBar');
+  histSelected = new Set();
+  if(bulkBar) bulkBar.style.display = 'none';
   if(!auth.currentUser){
     listEl.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">Sign in to see saved history.</div>`;
     return;
@@ -31,17 +34,19 @@ async function buildHistoryPage(){
     const netText  = net >= 0 ? `+ RM ${Math.round(net).toLocaleString()}` : `− RM ${Math.round(Math.abs(net)).toLocaleString()}`;
     const label    = e.label || '';
     const pinIcon  = e.pinned ? '📌 ' : '';
-    const entryDataStr = JSON.stringify(e).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
 
     return `
       <div class="history-card" data-id="${e.id}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;">
-        <div style="flex:1;min-width:0;">
-          ${label ? `<div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">${pinIcon}${label}</div>` : ''}
-          <div style="font-size:${label?'11px':'13px'};font-weight:${label?'400':'600'};color:${label?'var(--muted)':'var(--white)'};margin-bottom:4px;">${label?'':pinIcon}${date}</div>
-          <div style="font-size:11px;color:var(--muted2);margin-bottom:4px;">
-            ${(e.peakUsers||0).toLocaleString()} peak users · RM ${(e.price||0).toFixed(2)}/ep · ${e.paidEps||17} paid eps · Fixed RM ${Math.round(e.fixedCost||0).toLocaleString()}
+        <div style="display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;">
+          <input type="checkbox" class="hist-checkbox" data-id="${e.id}" onchange="histToggleSelect('${e.id}', this.checked)" style="margin-top:4px;width:16px;height:16px;accent-color:var(--crimson);flex-shrink:0;cursor:pointer;"/>
+          <div style="flex:1;min-width:0;">
+            ${label ? `<div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;">${pinIcon}${label}</div>` : ''}
+            <div style="font-size:${label?'11px':'13px'};font-weight:${label?'400':'600'};color:${label?'var(--muted)':'var(--white)'};margin-bottom:4px;">${label?'':pinIcon}${date}</div>
+            <div style="font-size:11px;color:var(--muted2);margin-bottom:4px;">
+              ${(e.peakUsers||0).toLocaleString()} peak users · RM ${(e.price||0).toFixed(2)}/ep · ${e.paidEps||17} paid eps · Fixed RM ${Math.round(e.fixedCost||0).toLocaleString()}
+            </div>
+            <div style="font-size:12px;font-weight:600;color:${netColor};">Net profit: ${netText}</div>
           </div>
-          <div style="font-size:12px;font-weight:600;color:${netColor};">Net profit: ${netText}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
           <button class="icon-btn" onclick="restoreHistoryEntry('${e.id}')" style="white-space:nowrap;">Restore</button>
@@ -56,6 +61,44 @@ async function buildHistoryPage(){
         </div>
       </div>`;
   }).join('');
+}
+
+let histSelected = new Set();
+
+function histUpdateBulkBar(){
+  const bar = document.getElementById('historyBulkBar');
+  const count = document.getElementById('historySelectedCount');
+  if(!bar) return;
+  count.textContent = histSelected.size;
+  bar.style.display = histSelected.size > 0 ? 'flex' : 'none';
+}
+
+function histToggleSelect(id, checked){
+  if(checked) histSelected.add(id); else histSelected.delete(id);
+  histUpdateBulkBar();
+}
+
+function histSelectAll(){
+  document.querySelectorAll('.hist-checkbox').forEach(cb=>{
+    cb.checked = true;
+    histSelected.add(cb.dataset.id);
+  });
+  histUpdateBulkBar();
+}
+
+function histClearSelection(){
+  document.querySelectorAll('.hist-checkbox').forEach(cb=> cb.checked = false);
+  histSelected.clear();
+  histUpdateBulkBar();
+}
+
+async function histDeleteSelected(){
+  if(histSelected.size === 0) return;
+  if(!confirm(`Delete ${histSelected.size} selected entr${histSelected.size===1?'y':'ies'}?`)) return;
+  for(const id of histSelected){
+    await deleteHistoryEntry(auth.currentUser.uid, id);
+  }
+  buildHistoryPage();
 }
 
 function toggleHistMenu(id){
@@ -109,11 +152,12 @@ function restoreHistoryEntry(id){
    BUILD DASHBOARD
 ═══════════════════════════════════════════ */
 function buildDashboard(){
-  activeOverviewScenario = 'decent';
-  cfg = { ...scenarios.decent };
+  activeOverviewScenario = 'min';
+  cfg = { ...scenarios.min };
+  loadPayoutSplitForActiveScenario();
 
   document.getElementById('dash-sub').textContent =
-    `${(scenarios.decent.peakUsers||0).toLocaleString()} peak users (decent) · RM ${scenarios.decent.price.toFixed(2)}/ep · ${scenarios.decent.paidEps} paid eps`;
+    `${(scenarios.min.peakUsers||0).toLocaleString()} peak users (minimum) · RM ${scenarios.min.price.toFixed(2)}/ep · ${scenarios.min.paidEps} paid eps`;
 
   renderOverviewMetrics();
   buildConfigBanner();
@@ -132,6 +176,7 @@ document.querySelectorAll('.sc-switch-btn').forEach(btn=>{
       const sc = btn.dataset.sc;
       activeOverviewScenario = sc;
       cfg = { ...scenarios[sc] };
+      loadPayoutSplitForActiveScenario();
       document.querySelectorAll('.sc-switch-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.sc-switch-btn[data-sc="${sc}"]`).forEach(b => b.classList.add('active'));
       renderOverviewMetrics();

@@ -77,6 +77,7 @@ function updateProducerSplit(val){
   const dVal = 100 - pVal;
   producerSplit = pVal / 100;
   directorSplit = dVal / 100;
+  payoutSplits[activeOverviewScenario] = { producer: producerSplit, director: directorSplit };
 
   document.getElementById('producer-pct-input').value       = pVal;
   document.getElementById('po-producer-pct').textContent    = pVal + '%';
@@ -98,6 +99,7 @@ function updateDirectorSplit(val){
   const pVal = 100 - dVal;
   directorSplit = dVal / 100;
   producerSplit = pVal / 100;
+  payoutSplits[activeOverviewScenario] = { producer: producerSplit, director: directorSplit };
 
   document.getElementById('director-pct-input').value       = dVal;
   document.getElementById('po-director-pct').textContent    = dVal + '%';
@@ -110,6 +112,28 @@ function updateDirectorSplit(val){
   buildPayoutChart();
   buildPayoutTable();
   buildCumulativeChart();
+}
+
+// Loads the stored split for whichever scenario is now active, and
+// refreshes the slider/input UI to match — called on scenario switch.
+function loadPayoutSplitForActiveScenario(){
+  const s = payoutSplits[activeOverviewScenario] || { producer: 0.5, director: 0.5 };
+  producerSplit = s.producer;
+  directorSplit = s.director;
+  const pVal = Math.round(producerSplit*100);
+  const dVal = Math.round(directorSplit*100);
+  const pInput = document.getElementById('producer-pct-input');
+  const dInput = document.getElementById('director-pct-input');
+  if(pInput){
+    pInput.value = pVal;
+    document.getElementById('po-producer-pct').textContent = pVal + '%';
+    document.getElementById('producer-split-slider').value = pVal;
+  }
+  if(dInput){
+    dInput.value = dVal;
+    document.getElementById('po-director-pct').textContent = dVal + '%';
+    document.getElementById('director-split-slider').value = dVal;
+  }
 }
 
 function buildPayoutChart(){
